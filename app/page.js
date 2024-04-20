@@ -11,7 +11,7 @@ export default function Home() {
     socket.emit("createLobby");
     socket.on('lobbyCreated', (data) => {
       console.log('created lobby, id:', data);
-      router.push(`/lobby/${data}`)
+      router.push(`/story/lobby/${data}`)
     });
   }
 
