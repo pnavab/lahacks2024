@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from "next/navigation";
 import { socket } from "../../../socket";
+import Link from 'next/link';
 
 export default function Paint() {
     const canvasRef = useRef(null);
@@ -96,7 +97,7 @@ export default function Paint() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const image = canvas.toDataURL('image/png');
-        const response = await fetch("http://localhost:3000/api/guess_image", {
+        const response = await fetch("/api/guess_image", {
             "body": JSON.stringify({ 'image': image, 'username': username }),
             "method": "POST"
         });
@@ -246,36 +247,54 @@ export default function Paint() {
     return (
         <div className='bg-gradient-to-br from-[#998cb4] to-[#29162a] text-black h-screen font-mono'>
             {/* navbar */}
-            <div className="navbar top-4 left-0 right-0 shadow-lg border-none text-white z-10">
+            <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
                 <div className="navbar-start">
+                    <div className="navbar-center">
+                        <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
+                            Ai Dungeon
+                        </Link>
+                    </div>
                     <div className="dropdown">
-                        <label tabIndex="0" className="btn btn-ghost btn-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                        <Link
+                            href='/'
+                        >
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                                Home
+                            </label>
+                        </Link>
+                        <Link
+                            href='/gameMaster'
+                        >
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/gameMaster' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                                Game Master
+                            </label>
+                        </Link>
+                    </div>
+                    <div className="dropdown">
+                        <label tabIndex="0" className="btn btn-ghost bg-transparent hover:bg-transparent">
+                            Games
                         </label>
-                        <ul tabIndex="0" className="menu menu-compact dropdown-content mt-5 p-2 shadow-lg bg-base-100 rounded-box w-52 text-black">
+                        <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  bg-opacity-15 rounded-box w-52 bg-black text-white">
                             <li><a>Gamemode1</a></li>
                             <li><a>Gamemode2</a></li>
                             <li><a>GAMEMODE3!!</a></li>
                         </ul>
                     </div>
                 </div>
-                <div className="navbar-center">
-                    <a href='/' className="btn btn-ghost normal-case text-xl">BABABOOEY</a>
-                </div>
                 <div className="navbar-end">
-
-                    <button className="btn btn-ghost btn-circle">
-                        <div className="indicator">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                            <span className="badge badge-xs"></span>
-                        </div>
+                    <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 20 20" fill="black">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
+                        </svg>
+                        <p className=""> Play </p>
                     </button>
                 </div>
             </div>
+
             {/* NavBar Ends Here */}
             {lobbyExists
                 ?
-                <div id='lobby-exists' className='text-left flex justify-start gap-20 mx-20'> 
+                <div id='lobby-exists' className='text-left flex justify-start pt-20 gap-20 mx-20'> 
                     <div className="text-black pt-20 items-center w-48 pl-3"> {/* Left Column */}
 
                         <button className='bg-gray-300 rounded-md px-5 py-2 duration-200 hover:bg-gray-400' onClick={startRound}>Start Round</button>

@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, useParams } from "next/navigation";
 import { socket } from "../../../socket";
+import Link from 'next/link';
 
 export default function Paint() {
     const canvasRef = useRef(null);
@@ -12,7 +13,7 @@ export default function Paint() {
     const [lobbyExists, setLobbyExists] = useState(true); //chnage to empty after testing
     const [joinedLobby, setJoinedLobby] = useState(false);
     const [guess, setGuess] = useState("Draw!!");
-    const [penSize, setPenSize] = useState(5);
+    const [penSize, setPenSize] = useState(8);
     const [color, setColor] = useState('#000000');
     const [prevX, setPrevX] = useState(null);
     const [prevY, setPrevY] = useState(null);
@@ -31,26 +32,11 @@ export default function Paint() {
     function joinSoloCanvas() {
         socket.emit("joinSoloCanvas", username, params.id);
         socket.on("joinedSoloCanvas", (data) => {
-            
+
         })
     }
 
     function renderImage(username, data) {
-        // const img = new Image();
-
-        // // Set the crossOrigin property to allow drawing the image on the canvas
-        // img.crossOrigin = "Anonymous";
-
-        // // Draw the image on the canvas once it has loaded
-        // img.onload = () => {
-        //     ctx.drawImage(img, 0, 0);
-        // };
-
-        // img.src = data;
-        // const imageElement = document.getElementById(`drawing-${username}`);
-        // if (imageElement) {
-            //     imageElement.src = data;
-            // }
         console.log("in renderImage data is", data);
         const imageElement = document.getElementById(`drawing-${username}`);
         if (imageElement) {
@@ -66,32 +52,39 @@ export default function Paint() {
             prompts = useOnlyCustomWords ? customSplit : prompts.concat(customSplit);
         }
         const randomIndex = Math.floor(Math.random() * prompts.length);
-        setPrompt(prompts[randomIndex]);
+        const prompt = (prompts[randomIndex]);
+        // setPrompt(prompt);
+        socket.emit("setPrompt", params.id, prompt);
+        return prompt;
     }
 
     function startRound() {
-        clearCanvas();
-        choosePrompt();
-        setTimer(true);
-        setRemainingTime(timerTime);
-        setGameState("drawing");
-        const intervalId = setInterval(() => {
-            setRemainingTime((prevTime) => {
-                if (prevTime <= 1) {
-                    clearInterval(intervalId); // Clear the interval when time is up
-                    return 0;
-                } else {
-                    return prevTime - 1;
-                }
-            });
-        }, 1000); // Decrease every second
-        setTimeout(() => {
-            if (isMounted.current) {
-                guessDrawing();
-            }
-            setTimer(false);
-            setRemainingTime(null);
-        }, timerTime * 1000); // After timerTime seconds, stop the timer
+        socket.emit('startVersusRound', params.id, timerTime);
+        // clearCanvas();
+        // socket.emit("clearCanvas", params.id);
+        // socket.emit("startTimer", params.id, timerTime);
+
+        // choosePrompt();
+
+
+        // setGameState("drawing");
+        // const intervalId = setInterval(() => {
+        //     setRemainingTime((prevTime) => {
+        //         if (prevTime <= 1) {
+        //             clearInterval(intervalId); // Clear the interval when time is up
+        //             return 0;
+        //         } else {
+        //             return prevTime - 1;
+        //         }
+        //     });
+        // }, 1000); // Decrease every second
+        // setTimeout(() => {
+        //     if (isMounted.current) {
+        //         guessDrawing();
+        //     }
+        //     setTimer(false);
+        //     setRemainingTime(null);
+        // }, timerTime * 1000); // After timerTime seconds, stop the timer
     }
 
     async function guessDrawing() {
@@ -99,7 +92,7 @@ export default function Paint() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const image = canvas.toDataURL('image/png');
-        const response = await fetch("http://localhost:3000/api/guess_image", {
+        const response = await fetch(`/api/guess_image`, {
             "body": JSON.stringify({ 'image': image, 'username': username }),
             "method": "POST"
         });
@@ -143,26 +136,88 @@ export default function Paint() {
             renderImage(username, canvas);
         }
 
-        // const clearCanvasForAll = (data) => {
-        //     const canvas = canvasRef.current;
-        //     const ctx = canvas.getContext('2d');
-        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // }
+        const clearCanvasForAll = (data) => {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
         const handleLobbyUserUpdate = (data) => {
             console.log("received update", data);
             setConnectedUsers(data);
         };
 
+        const updatePrompt = (data) => {
+            console.log("received prompt", data)
+            setPrompt(data);
+        }
+
+        const startTime = (data) => {
+            console.log("starting timer...");
+            setTimer(true);
+            setRemainingTime(timerTime);
+            const intervalId = setInterval(() => {
+                setRemainingTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(intervalId); // Clear the interval when time is up
+                        return 0;
+                    } else {
+                        return prevTime - 1;
+                    }
+                });
+            }, 1000); // Decrease every second
+            setTimeout(() => {
+                if (isMounted.current) {
+                    guessDrawing();
+                }
+                setTimer(false);
+                setRemainingTime(null);
+            }, timerTime * 1000); // After timerTime seconds, stop the timer
+        }
+
+        const startVersusRoundForAll = (data) => {
+            console.log("starting round for all...");
+            clearCanvas();
+            choosePrompt();
+            setTimer(true);
+            setRemainingTime(timerTime);
+            setGameState("drawing");
+            const intervalId = setInterval(() => {
+                setRemainingTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(intervalId); // Clear the interval when time is up
+                        return 0;
+                    } else {
+                        return prevTime - 1;
+                    }
+                });
+            }, 1000); // Decrease every second
+            setTimeout(() => {
+                if (isMounted.current) {
+                    guessDrawing();
+                }
+                setTimer(false);
+                setRemainingTime(null);
+            }, timerTime * 1000); // After timerTime seconds, stop the timer
+        }
+
+
         checkIfLobbyIdValid();
 
         socket.on("updateSoloCanvas", updateSoloCanvas);
         socket.on("soloCanvasUserUpdate", handleLobbyUserUpdate);
+        socket.on("clearCanvasForAll", clearCanvasForAll);
+        socket.on("updatePrompt", updatePrompt);
+        socket.on("startTimerForAll", startTime);
+        socket.on("startVersusRoundForAll", startVersusRoundForAll);
 
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("updateSoloCanvas", updateSoloCanvas);
             socket.off("soloCanvasUserUpdate", handleLobbyUserUpdate);
+            socket.off("clearCanvasForAll", clearCanvasForAll);
+            socket.off("updatePrompt", updatePrompt);
+            socket.off("startVersusRoundForAll", startVersusRoundForAll);
         };
     }, []);
 
@@ -238,36 +293,53 @@ export default function Paint() {
     return (
         <div className='bg-gradient-to-br from-[#998cb4] to-[#29162a] text-black h-screen font-mono'>
             {/* navbar */}
-            <div className="navbar top-4 left-0 right-0 shadow-lg border-none text-white z-10">
+            <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
                 <div className="navbar-start">
+                    <div className="navbar-center">
+                        <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
+                            Ai Dungeon
+                        </Link>
+                    </div>
                     <div className="dropdown">
-                        <label tabIndex="0" className="btn btn-ghost btn-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                        <Link
+                            href='/'
+                        >
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                                Home
+                            </label>
+                        </Link>
+                        <Link
+                            href='/'
+                        >
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/gameMaster' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                                Game Master
+                            </label>
+                        </Link>
+                    </div>
+                    <div className="dropdown">
+                        <label tabIndex="0" className="btn btn-ghost bg-transparent hover:bg-transparent">
+                            Games
                         </label>
-                        <ul tabIndex="0" className="menu menu-compact dropdown-content mt-5 p-2 shadow-lg bg-base-100 rounded-box w-52 text-black">
+                        <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black bg-opacity-15 text-white">
                             <li><a>Gamemode1</a></li>
                             <li><a>Gamemode2</a></li>
                             <li><a>GAMEMODE3!!</a></li>
                         </ul>
                     </div>
                 </div>
-                <div className="navbar-center">
-                    <a href='/' className="btn btn-ghost normal-case text-xl">BABABOOEY</a>
-                </div>
                 <div className="navbar-end">
-
-                    <button className="btn btn-ghost btn-circle">
-                        <div className="indicator">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                            <span className="badge badge-xs"></span>
-                        </div>
+                    <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 20 20" fill="black">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
+                        </svg>
+                        <p className=""> Play </p>
                     </button>
                 </div>
             </div>
             {/* lobby info starts here */}
             {lobbyExists
                 ?
-                <div id='lobby-exists' className='text-left flex justify-start gap-8 mx-8'>
+                <div id='lobby-exists' className='text-left flex justify-start gap-8 mx-8 pt-20'>
 
                     <div className="text-black pt-20 items-center w-48"> {/* Left Column */}
 
@@ -278,7 +350,7 @@ export default function Paint() {
                                     <p className='text-xl p-2'>Draw a {prompt}</p>
                                 </div>
                             )}
-                            {guess && ( 
+                            {guess && (
                                 <div className="border-b border-black">
                                     <p className={`text-xl p-2 animate-pulse ${prompt && guess.toLowerCase().includes(prompt.toLowerCase()) ? 'text-green-500' : ""}`}>{guess}</p>
                                 </div>
@@ -300,44 +372,44 @@ export default function Paint() {
                                     </div>
                                 }
                                 <div>
-                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={copyUrlToClipboard} onMouseEnter={(event) => {event.target.innerText = window.location.href}} onMouseLeave={(event) => {event.target.innerText = 'Copy Invite Link'}}>Copy Invite Link</button>
+                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={copyUrlToClipboard} onMouseEnter={(event) => { event.target.innerText = window.location.href }} onMouseLeave={(event) => { event.target.innerText = 'Copy Invite Link' }}>Copy Invite Link</button>
                                 </div>
                             </div>
                             <div className='canvas w-full '>
                                 <canvas ref={canvasRef} width={800} height={600} className='bg-white rounded-sm border-black hover:cursor-crosshair'></canvas>
                                 <div className='flex flex-row items-center gap-32 mt-4'>
                                     <div className="colors relative" data-tooltip="Left-/Rightclick to choose a color!" data-tooltipdir="S">
-                                            <div className="top flex ">
-                                                <div className=" rounded-tl-sm color bg-white  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#FFFFFF")}></div>
-                                                <div className="color bg-gray-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#9ca3af")}></div>
-                                                <div className="color bg-red-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ef4444")}></div>
-                                                <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
-                                                <div className="color bg-yellow-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#facc15")}></div>
-                                                <div className="color bg-green-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#22c55e")}></div>
-                                                <div className="color bg-green-300  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#86efac")}></div>
-                                                <div className="color bg-blue-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#5DE2E7")}></div>
-                                                <div className="color bg-blue-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#1d4ed8")}></div>
-                                                <div className="color bg-purple-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#a855f7")}></div>
-                                                <div className="color bg-pink-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ec4899")}></div>
-                                                <div className="color bg-pink-200  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#fbcfe8")}></div>
-                                                <div className="rounded-tr-sm color bg-[#bfa094]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#bfa094")}></div>
-                                            </div>
-                                            <div className="bottom flex rounded-b-2">
-                                                <div className=" rounded-bl-sm color bg-black  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#000000")}></div>
-                                                <div className="color bg-gray-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#4b5563")}></div>
-                                                <div className="color bg-red-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#991b1b")}></div>
-                                                <div className="color bg-orange-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ea580c")}></div>
-                                                <div className="color bg-yellow-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ca8a04")}></div>
-                                                <div className="color bg-green-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#166534")}></div>
-                                                <div className="color bg-green-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#16a34a")}></div>
-                                                <div className="color bg-blue-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#2563eb")}></div>
-                                                <div className="color bg-indigo-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#312e81")}></div>
-                                                <div className="color bg-purple-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#581c87")}></div>
-                                                <div className="color bg-purple-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#7e22ce")}></div>
-                                                <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
-                                                <div className=" rounded-br-sm color bg-[#977669]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#977669")}></div>
-                                                {/* <div className="color bg-[#43302b]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125" onClick={(e) => setColor("#43302b") }></div> */}
-                                            </div>
+                                        <div className="top flex ">
+                                            <div className=" rounded-tl-sm color bg-white  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#FFFFFF")}></div>
+                                            <div className="color bg-gray-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#9ca3af")}></div>
+                                            <div className="color bg-red-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ef4444")}></div>
+                                            <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
+                                            <div className="color bg-yellow-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#facc15")}></div>
+                                            <div className="color bg-green-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#22c55e")}></div>
+                                            <div className="color bg-green-300  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#86efac")}></div>
+                                            <div className="color bg-blue-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#5DE2E7")}></div>
+                                            <div className="color bg-blue-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#1d4ed8")}></div>
+                                            <div className="color bg-purple-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#a855f7")}></div>
+                                            <div className="color bg-pink-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ec4899")}></div>
+                                            <div className="color bg-pink-200  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#fbcfe8")}></div>
+                                            <div className="rounded-tr-sm color bg-[#bfa094]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#bfa094")}></div>
+                                        </div>
+                                        <div className="bottom flex rounded-b-2">
+                                            <div className=" rounded-bl-sm color bg-black  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#000000")}></div>
+                                            <div className="color bg-gray-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#4b5563")}></div>
+                                            <div className="color bg-red-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#991b1b")}></div>
+                                            <div className="color bg-orange-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ea580c")}></div>
+                                            <div className="color bg-yellow-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ca8a04")}></div>
+                                            <div className="color bg-green-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#166534")}></div>
+                                            <div className="color bg-green-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#16a34a")}></div>
+                                            <div className="color bg-blue-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#2563eb")}></div>
+                                            <div className="color bg-indigo-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#312e81")}></div>
+                                            <div className="color bg-purple-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#581c87")}></div>
+                                            <div className="color bg-purple-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#7e22ce")}></div>
+                                            <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
+                                            <div className=" rounded-br-sm color bg-[#977669]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#977669")}></div>
+                                            {/* <div className="color bg-[#43302b]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125" onClick={(e) => setColor("#43302b") }></div> */}
+                                        </div>
                                     </div>
                                     <div className="flex flex-row gap-3  p-2 items-center ">
                                         <div className={`color duration-200 cursor-grab h-2 w-2 rounded-full hover:scale-125 ${penSize === 4 ? 'bg-black' : 'bg-gray-500'}`} onClick={(e) => setPenSize(4)}></div>
@@ -353,7 +425,7 @@ export default function Paint() {
                             {/* )} */}
                         </div>
                     </div>
-                    <div className='mt-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
+                    <div className='mt-[100px] ml-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
                         <div className="w-full">
                             {connectedUsers.length > 0 ?
                                 <h1 className={`text-center w-full px-4 py-2 bg-gray-300 ${connectedUsers.length > 1 ? "rounded-t-md" : "rounded-md"}`}>Connected:</h1>
@@ -364,7 +436,7 @@ export default function Paint() {
                         {connectedUsers.filter(user => user != username).map((user, index) => (
                             <div key={index} className={`text-black bg-gray-100 w-full`}>
                                 <h1 className='pl-3'>{user}:</h1>
-                                <img className={`bg-white`} id={`drawing-${user}`} alt={`${user}'s drawing`} />
+                                <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} alt={`${user}'s drawing`} />
                             </div>
                         ))}
                     </div>
