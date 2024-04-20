@@ -188,8 +188,8 @@ export default function Home() {
 
                     {!joinedLobby && (
                         <div className="row mt-3 mb-80">
-                            <input placeholder='username' onChange={(e) => setUsername(e.target.value)}></input>
-                            <button className="btn" onClick={joinLobby}>join lobby</button>
+                            <input placeholder='username' className='px-5 py-2 border-none bg-white text-black rounded-l-md' onChange={(e) => setUsername(e.target.value)}></input>
+                            <button className='bg-gray-300 px-5 py-2 duration-200 rounded-r-md hover:bg-gray-400' onClick={joinLobby}>Join Lobby</button>
                         </div>
                     )}
 
