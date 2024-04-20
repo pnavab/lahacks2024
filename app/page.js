@@ -82,7 +82,7 @@ export default function Home() {
           <h1 class="relative w-[max-content] font-mono before:absolute before:inset-0 before:animate-typewriter before:bg-stone-800  after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black text-7xl py-2"><p className=' text-slate-500'> AI</p>Powered Gaming</h1>
         </div>
         <div className=" animate-fadeIn delay-500">
-          <button className="bg-gradient-to-r from-indigo-300 to-indigo-100  text-black hover:from-indigo-200 hover:to-indigo-50 duration-300 flex p-4 rounded-xl text-4xl">
+          <button onClick={() => {router.push('/gameMaster')}} className="bg-gradient-to-r from-indigo-300 to-indigo-100  text-black hover:from-indigo-200 hover:to-indigo-50 duration-300 flex p-4 rounded-xl text-4xl">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-10" viewBox="0 0 20 20" fill="black">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
             </svg>

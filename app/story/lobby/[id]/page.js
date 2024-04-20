@@ -32,10 +32,10 @@ export default function Home() {
 
         // Generate Image here Et here
 
-        if (avatarText !== '') {
-            setIsLobbyTime(false)
-            setIsStoryTime(true)
-        }
+        // if (avatarText !== '') {
+        //     setIsLobbyTime(false)
+        //     setIsStoryTime(true)
+        // }
 
         console.log("in assignAvatar button")
         console.log('button clicked', avatarText)
@@ -199,11 +199,11 @@ export default function Home() {
                                 <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)} />
                                 <button onClick={assignAvatar}> Go </button>
                                 <input disabled value={story} />
-                                <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
-                                    <div className="text-black grid grid-cols-1 items-center ml-auto mr-auto">
+                                <div className="flex flex-row items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
+                                    <div className="text-black flex flex-row items-center ml-auto mr-auto">
                                         {connectedUsers.map((user, index) => (
-                                            <div key={index} className="rounded-md items-center">
-                                                <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
+                                            <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
+                                                <img className='bg-white w-[400px] h-[400px]' id={`avatar-${user}`} alt={`${user}'s avatar`} />
                                             </div>
                                         ))}
                                     </div>
