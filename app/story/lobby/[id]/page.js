@@ -116,7 +116,7 @@ export default function Home() {
 
         const handleUpdateStoryForAll = (data) => {
             console.log("received update story image here", data);
-            setStoryContext(storyContext => [...storyContext, data]);
+            setStoryContext(storyContext => [data, ...storyContext]);
             console.log("story context is now", storyContext);
         }
 
@@ -226,15 +226,19 @@ export default function Home() {
                                 {
                                     isStoryTime ?
                                     <>
-                                        <div id="main story strip" className="flex flex-row-reverse items-center mt-28 w-[80vw] h-[65vh] overflow-x-scroll bg-gray-200">
-                                            <div className="text-black flex flex-row-reverse overflow-x-scroll overflow-y-scroll items-center ml-auto mr-auto">
+                                        <div id="main story strip" className="flex flex-row items-center mt-28 w-[80vw] h-[65vh] bg-gray-200">
+                                            <div className="no-scrollbar text-black flex flex-row overflow-x-auto items-center ml-auto mr-auto">
                                                 {storyContext.map((storyPoint, index) => (
                                                     <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
                                                         {/* <img className='bg-white w-[400px] h-[400px]' src={storyPoint} /> */}
                                                         {typeof storyPoint === 'string' ? (
-                                                            <p>{storyPoint}</p>
+                                                            <div className="w-[300px] h-[80%]">
+                                                                {storyPoint}
+                                                            </div>
                                                         ) : (
-                                                            <img className='bg-white w-[400px] h-[400px]' src={'/1.png'} />
+                                                            <div className="w-[800px] h-[80%]">
+                                                                <img className='bg-white' src={'/1.png'} />
+                                                            </div>
                                                         )}
                                                     </div>
                                                 ))}
