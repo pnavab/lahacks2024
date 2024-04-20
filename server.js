@@ -46,7 +46,7 @@ app.prepare().then(() => {
       }
       const lobby = LOBBIES.get(id);
       if (lobby) {
-        const client = {'socketId': socket.id, 'username': username, 'avatar': avatarUrl}
+        const client = {'socketId': socket.id, 'username': username, 'avatar': ''}
         lobby.clients.push(client);
         socket.join(id);
         
@@ -67,6 +67,7 @@ app.prepare().then(() => {
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
+        console.log("updating avatar", username, avatarUrl);
         io.in(id).emit('lobbyAvatarUpdate', username, avatarUrl);
       } else {
         console.log("lobby not found");

@@ -23,14 +23,15 @@ export default function Home() {
 
         // Generate Image here
 
+        console.log("in assignAvatar button")
+        console.log('button clicked', avatarText)
 
-        console.log(avatarText)
         socket.emit("updateAvatar", username, params.id, avatarText)
     }
 
     function joinLobby() {
         // todo: check if username is already taken
-        socket.emit("joinLobby", username, params.id, avatarText);
+        socket.emit("joinLobby", username, params.id, null);
         socket.on('lobbyJoined', (data) => {
             console.log("joined lobby")
             setJoinedLobby(true);
@@ -69,10 +70,11 @@ export default function Home() {
         };
 
         
-        const handleAvatarUpdate = (username, avatar) => {
-            // console.log("received update setting users here", [username, avatar]);
-            console.log('avatar', avatar)
+        const handleAvatarUpdate = (username, avatarUrl) => {
+            // console.log("received update setting users here", [username, avatarUrl]);
+            console.log('avatarUrl', avatarUrl)
             const imageElement = document.getElementById(`avatar-${username}`);
+            console.log('imageElement', imageElement)
             if (imageElement) {
                 imageElement.src = '/1.png';
             }
@@ -156,23 +158,25 @@ export default function Home() {
                     )}
 
                     
-
+                    <div>
+                        {/* where client's avatar will go */}
+                    </div>
+                    <div>
+                        <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
+                        <button onClick={assignAvatar}> Gofcvrtgv </button>
+                    </div>
                     <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
                         <div className="text-black flex flex-row items-center ml-auto mr-auto">
                             {console.log(connectedUsers, 'asdasd')}
-                            {connectedUsers.filter(user => user != username).map((user, index) => (
+                            {connectedUsers.map((user, index) => (
                                 <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
-                                    {user}
+                                    <p>User: {user}</p>
                                     <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div>
-                        <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
-                        <button onClick={assignAvatar}> Go </button>
-                    </div>
                     {avatarText}
 
                     {qrCode && (

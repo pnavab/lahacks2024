@@ -26,7 +26,6 @@ export default function Home() {
     }
 
     function handleEnter(e) {
-        e.preventDefault();
         if (e.key === 'Enter') {
             getRecommendation();
         }
@@ -91,7 +90,7 @@ export default function Home() {
             <div className="bg-stone-800 font-mono pl-4 pt-44 text-center h-screen w-full">
                 <p className="text-7xl font-bold"> Game Master </p>
                 <div className="flex justify-center text-center pt-4 ">
-                    <input placeholder={'What Game do You want to Experience                            ↵ '} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
+                    <input placeholder={'What Game do You want to Experience                            ↵ '} onKeyDown={handleEnter} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
                 </div>
                 {/* Response */}
                 <input disabled placeholder={`${response}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
