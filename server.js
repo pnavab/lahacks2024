@@ -36,7 +36,7 @@ app.prepare().then(() => {
       socket.emit('lobbyCreated', id);
     });
       
-    socket.on('joinLobby', (username, lobbyId) => {
+    socket.on('joinLobby', (username, lobbyId, avatarUrl) => {
       let id = parseInt(lobbyId);
       if (lobbyId == null) {
         id = generateLobbyId(); // Generate a unique lobby ID
@@ -46,7 +46,7 @@ app.prepare().then(() => {
       }
       const lobby = LOBBIES.get(id);
       if (lobby) {
-        const client = {'socketId': socket.id, 'username': username}
+        const client = {'socketId': socket.id, 'username': username, 'avatar': ''}
         lobby.clients.push(client);
         socket.join(id);
         
@@ -57,6 +57,18 @@ app.prepare().then(() => {
         const usernames = lobby.clients.map((client) => client.username);
         console.log("usernames are", usernames);
         io.in(id).emit('lobbyUpdate', usernames);
+      } else {
+        console.log("lobby not found");
+        socket.emit('joinError', 'Lobby not found');
+      }
+    });
+
+    socket.on('updateAvatar', (username, lobbyId, avatarUrl) => {
+      let id = parseInt(lobbyId);
+      const lobby = LOBBIES.get(id);
+      if (lobby) {
+        console.log("updating avatar", username, avatarUrl);
+        io.in(id).emit('lobbyAvatarUpdate', username, avatarUrl);
       } else {
         console.log("lobby not found");
         socket.emit('joinError', 'Lobby not found');
