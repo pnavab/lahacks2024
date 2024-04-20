@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { socket } from "./socket";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
@@ -90,34 +91,52 @@ export default function Home() {
           </button>
         </div>
         <div className="pt-24  text-left duration-700">
-          <div className=" w-full pr-8 grid grid-cols-3 gap-4" >
-            <button
-              className="w-full text-lg bg-transparent animate-fadeIn delay-0 hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={createCollaborativeCanvasLobby}
-            >
-              AI Collab Drawing
-              <p className="text-sm">
-                Join friends to play a guessing game where you all draw together
-              </p>
-            </button>
-            <button
-              className="w-full text-lg  animate-fadeIn delay-100 bg-transparent hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={createVersusLobby}
-            >
-              Versus Drawing Game with AI
-              <p className="text-sm">
-                versus drawing game
-              </p>
-            </button>
-            <button
-              className="w-full text-lg bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={createStoryLobby}
-            >
-              Storytelling mode
-              <p className="text-sm">
-                Join friends to play a guessing game... with Ai
-              </p>
-            </button>
+          <div className=" w-full pr-4 flex justify-between gap-4" >
+            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black ">
+              <div className="card-body">
+                <div className="card-actions justify-end">
+                <button
+                    className="w-full text-xl bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
+                    onClick={createStoryLobby}
+                  >
+                    Storytelling mode
+                    <p className="text-sm">
+                      Join friends to play a guessing game... with Ai
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black " >
+              <div className="card-body">
+                <div className="card-actions justify-end">
+                <button
+                    className="w-full text-xl bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
+                    onClick={createCollaborativeCanvasLobby}
+                  >
+                    Collaborative AI Drawing
+                    <p className="text-sm">
+                      Join friends to play a guessing game... with Ai
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black ">
+              <div className="card-body">
+                <div className="card-actions justify-end">
+                <button
+                    className="w-full text-xl bg-transparent animate-fadeIn delay-200 hover:bg-stone-700 duration-300 rounded-2xl "
+                    onClick={createVersusLobby}
+                  >
+                    Versus AI Drawing 
+                    <p className="text-sm">
+                      Join friends to play a guessing game... with Ai
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
