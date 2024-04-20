@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
+    const [recommendationResponse, setRecommendationResponse] = useState();
     const router = useRouter();
 
     function createLobby() {
@@ -14,6 +15,14 @@ export default function Home() {
             console.log('created lobby, id:', data);
             router.push(`/lobby/${data}`)
         });
+    }
+
+    async function getRecommendation() {
+        setRecommendationResponse('Thinking...');
+        const response = await fetch('http://localhost:8000/game_master');
+        const data = await response.json();
+        console.log(data);
+        setRecommendationResponse(data);
     }
 
     function createCollaborativeCanvasLobby() {

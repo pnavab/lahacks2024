@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  function createLobby() {
+  function createStoryLobby() {
     socket.emit("createLobby");
     socket.on('lobbyCreated', (data) => {
       console.log('created lobby, id:', data);
@@ -111,7 +111,7 @@ export default function Home() {
             </button>
             <button
               className="w-full text-lg bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={() => setIndex(2)}
+              onClick={createStoryLobby}
             >
               AI Colab Drawing
               <p className="text-sm">
