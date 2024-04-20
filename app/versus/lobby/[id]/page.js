@@ -436,7 +436,7 @@ export default function Paint() {
                         {connectedUsers.filter(user => user != username).map((user, index) => (
                             <div key={index} className={`text-black bg-gray-100 w-full`}>
                                 <h1 className='pl-3'>{user}:</h1>
-                                <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} alt={`${user}'s drawing`} />
+                                <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} />
                             </div>
                         ))}
                     </div>

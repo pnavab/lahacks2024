@@ -195,15 +195,17 @@ export default function Home() {
 
                     <div>
                         {isLobbyTime ?
-                            <>
-                                <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)} />
-                                <button onClick={assignAvatar}> Go </button>
+                            <div>
+                                <div className="row mt-3 mb-5">
+                                    <input placeholder='Enter your avatar prompt' value={avatarText} className='px-5 py-2 border-none bg-white text-black rounded-l-md' onChange={(e) => setAvatarText(e.target.value)}></input>
+                                    <button className='bg-gray-300 px-5 py-2 duration-200 rounded-r-md hover:bg-gray-400' onClick={assignAvatar}>Generate</button>
+                                </div>
                                 <input disabled value={story} />
                                 <div className="flex flex-row items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
                                     <div className="text-black flex flex-row items-center ml-auto mr-auto">
                                         {connectedUsers.map((user, index) => (
                                             <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
-                                                <img className='bg-white w-[400px] h-[400px]' id={`avatar-${user}`} alt={`${user}'s avatar`} />
+                                                <img className='bg-white w-[400px] h-[400px]' id={`avatar-${user}`} />
                                             </div>
                                         ))}
                                     </div>
@@ -213,7 +215,7 @@ export default function Home() {
                                         <img src={qrCode} alt='qr code' height={200} width={200} />
                                     </div>
                                 )}
-                            </>
+                            </div>
                             :
                             <>
                                 {
