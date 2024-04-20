@@ -32,7 +32,9 @@ export default function Home() {
             <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
                 <div className="navbar-start">
                     <div className="navbar-center">
-                        <a className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300">Ai Dungeon</a>
+                        <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
+                            Ai Dungeon
+                        </Link>
                     </div>
                     <div className="dropdown">
                         <Link
@@ -51,10 +53,10 @@ export default function Home() {
                         </Link>
                     </div>
                     <div className="dropdown">
-                        <label tabIndex="0" className="btn btn-ghost ">
+                        <label tabIndex="0" className="btn btn-ghost bg-transparent hover:bg-transparent">
                             Games
                         </label>
-                        <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black text-white">
+                        <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black bg-opacity-15 text-white">
                             <li><a>Gamemode1</a></li>
                             <li><a>Gamemode2</a></li>
                             <li><a>GAMEMODE3!!</a></li>
@@ -73,10 +75,10 @@ export default function Home() {
             <div className="bg-stone-800 font-mono pl-4 pt-44 text-center h-screen w-full">
                 <p className="text-7xl font-bold"> Game Master </p>
                 <div className="flex justify-center text-center pt-4 ">
-                    <input  placeholder={'What Game do You want to Experience                            ↵ '} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' /> 
+                    <input placeholder={'What Game do You want to Experience                            ↵ '} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
                     {/* Response */}
                 </div>
-                <input disabled placeholder={`${response}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg"/> 
+                <input disabled placeholder={`${response}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
             </div>
         </main>
     );

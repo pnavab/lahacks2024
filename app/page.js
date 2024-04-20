@@ -29,7 +29,9 @@ export default function Home() {
       <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
         <div className="navbar-start">
           <div className="navbar-center">
-            <a className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300">Ai Dungeon</a>
+            <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" > 
+              Ai Dungeon
+            </Link> 
           </div>
           <div className="dropdown">
             <Link
@@ -48,10 +50,10 @@ export default function Home() {
             </Link>
           </div>
           <div className="dropdown">
-            <label tabIndex="0" className="btn btn-ghost ">
+            <label tabIndex="0" className="btn btn-ghost bg-transparent hover:bg-transparent">
               Games
             </label>
-            <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black text-white">
+            <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  bg-opacity-15 rounded-box w-52 bg-black text-white">
               <li><a>Gamemode1</a></li>
               <li><a>Gamemode2</a></li>
               <li><a>GAMEMODE3!!</a></li>
