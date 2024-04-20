@@ -12,7 +12,7 @@ export default function Paint() {
     const [lobbyExists, setLobbyExists] = useState(true); //chnage to empty after testing
     const [joinedLobby, setJoinedLobby] = useState(false);
     const [guess, setGuess] = useState("Draw!!");
-    const [penSize, setPenSize] = useState(5);
+    const [penSize, setPenSize] = useState(8);
     const [color, setColor] = useState('#000000');
     const [prevX, setPrevX] = useState(null);
     const [prevY, setPrevY] = useState(null);
@@ -36,21 +36,6 @@ export default function Paint() {
     }
 
     function renderImage(username, data) {
-        // const img = new Image();
-
-        // // Set the crossOrigin property to allow drawing the image on the canvas
-        // img.crossOrigin = "Anonymous";
-
-        // // Draw the image on the canvas once it has loaded
-        // img.onload = () => {
-        //     ctx.drawImage(img, 0, 0);
-        // };
-
-        // img.src = data;
-        // const imageElement = document.getElementById(`drawing-${username}`);
-        // if (imageElement) {
-            //     imageElement.src = data;
-            // }
         console.log("in renderImage data is", data);
         const imageElement = document.getElementById(`drawing-${username}`);
         if (imageElement) {
@@ -353,7 +338,7 @@ export default function Paint() {
                             {/* )} */}
                         </div>
                     </div>
-                    <div className='mt-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
+                    <div className='mt-[100px] ml-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
                         <div className="w-full">
                             {connectedUsers.length > 0 ?
                                 <h1 className={`text-center w-full px-4 py-2 bg-gray-300 ${connectedUsers.length > 1 ? "rounded-t-md" : "rounded-md"}`}>Connected:</h1>
@@ -364,7 +349,7 @@ export default function Paint() {
                         {connectedUsers.filter(user => user != username).map((user, index) => (
                             <div key={index} className={`text-black bg-gray-100 w-full`}>
                                 <h1 className='pl-3'>{user}:</h1>
-                                <img className={`bg-white`} id={`drawing-${user}`} alt={`${user}'s drawing`} />
+                                <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} alt={`${user}'s drawing`} />
                             </div>
                         ))}
                     </div>
