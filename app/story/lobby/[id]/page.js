@@ -18,6 +18,16 @@ export default function Home() {
 
     const [avatarText, setAvatarText] = useState('Not Set Yet')
 
+    function assignAvatar() {
+
+
+        // Generate Image here
+
+
+        console.log(avatarText)
+        socket.emit("updateAvatar", username, params.id, avatarText)
+    }
+
     function joinLobby() {
         // todo: check if username is already taken
         socket.emit("joinLobby", username, params.id, avatarText);
@@ -38,15 +48,7 @@ export default function Home() {
             })
         }
 
-        function assignAvatar() {
-
-
-            // Generate Image here
-
-
-            console.log(avatarText)
-            socket.emit("updateAvatar", avatarText)
-        }
+        
 
         async function generateQrCode() {
             const response = await fetch("http://localhost:3000/api/qr", {
@@ -68,7 +70,8 @@ export default function Home() {
 
         
         const handleAvatarUpdate = (username, avatar) => {
-            console.log("received update setting users here", [username, avatar]);
+            // console.log("received update setting users here", [username, avatar]);
+            console.log('avatar', avatar)
             const imageElement = document.getElementById(`avatar-${username}`);
             if (imageElement) {
                 imageElement.src = '/1.png';
@@ -168,7 +171,7 @@ export default function Home() {
 
                     <div>
                         <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
-                        <button onClick={e => assignAvatar()}> Go </button>
+                        <button onClick={assignAvatar}> Go </button>
                     </div>
                     {avatarText}
 
