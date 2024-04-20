@@ -31,7 +31,7 @@ async def query_handler(ctx: Context, sender: str, _query: Request):
         # do something here
         genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')
         model = genai.GenerativeModel(model_name="gemini-pro-vision")
-        response = model.generate_content("true or false: is it understandable that a smart person would mix up {guessed} with {correct} when playing pictionary")
+        response = model.generate_content("true or false: is it understandable that a smart person would mix up {_query.guessed} with {_query.correct} when playing pictionary")
         matches = re.search(response, "[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]")
         if(matches == None):
             await ctx.send(sender, Response(text="fail"))
