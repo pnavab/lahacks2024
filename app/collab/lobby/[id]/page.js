@@ -258,14 +258,14 @@ export default function Paint() {
                         <Link
                             href='/'
                         >
-                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent`}>
                                 Home
                             </label>
                         </Link>
                         <Link
                             href='/gameMaster'
                         >
-                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/gameMaster' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                            <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent `}>
                                 Game Master
                             </label>
                         </Link>
@@ -284,7 +284,7 @@ export default function Paint() {
                 <div className="navbar-end">
                     <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 20 20" fill="black">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
+                            <path fillRule='evenodd' clipRule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
                         </svg>
                         <p className=""> Play </p>
                     </button>

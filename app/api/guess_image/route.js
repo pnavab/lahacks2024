@@ -10,7 +10,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro-vision"});
 function fileToGenerativePart(path, mimeType) {
   return {
     inlineData: {
-      data: Buffer.from(fs.readFileSync(path)).toString("base64"),
+      data: path.toString("base64"),
       mimeType
     },
   };
@@ -48,10 +48,10 @@ export async function POST(req) {
       .toBuffer(); // Convert to buffer
 
     // Save the image as a JPEG file
-    fs.writeFileSync(`./app/api/guess_image/image-${username}.png`, data);
+    // fs.writeFileSync(`./app/api/guess_image/image-${username}.png`, data);
 
     // Get the image guess
-    const guess = await getImageGuess(`./app/api/guess_image/image-${username}.png`);
+    const guess = await getImageGuess(data);
     console.log(guess);
 
     return Response.json({ guess });
