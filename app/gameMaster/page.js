@@ -34,13 +34,28 @@ export default function Home() {
             setRecommendationResponse("Your input wasn't very clear, please try again.")
         }
         else if (data == "1") {
-            setRecommendationResponse("My curated pick for you: an AI powered story generator collaborative game.")
+            setRecommendationResponse("My curated pick for you: an AI powered story generator collaborative game.");
+            socket.emit("createLobby");
+            socket.on('lobbyCreated', (data) => {
+                console.log('created lobby, id:', data);
+                router.push(`/story/lobby/${data}`)
+            });
         }
         else if (data == "2") {
             setRecommendationResponse("A team player! I have selected a collaborative drawing game where all players will draw and try to beat the clock.")
+            socket.emit("createCollaborativeCanvasLobby");
+            socket.on('collaborativeCanvasLobbyCreated', (data) => {
+                console.log('created lobby, id:', data);
+                router.push(`/collab/lobby/${data}`)
+            });
         }
         else if (data == "3") {
-            setRecommendationResponse("You seem to be a competitive person! I have selected a drawing game where you will compete against other players, racing against the clock.")
+            setRecommendationResponse("You seem to be a competitive person! I have selected a drawing game where you will compete against other players, racing against the clock.");
+            socket.emit("createSoloCanvasLobby");
+            socket.on('soloCanvasLobbyCreated', (data) => {
+                console.log('created lobby, id:', data);
+                router.push(`/versus/lobby/${data}`)
+            });
         }
         else {
             setRecommendationResponse("I could not process your request :( Please try again.")
