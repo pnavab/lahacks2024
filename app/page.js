@@ -1,112 +1,115 @@
-import Image from "next/image";
+'use client'
+
+import Link from "next/link";
+import { socket } from "./socket";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  function createLobby() {
+    socket.emit("createLobby");
+    socket.on('lobbyCreated', (data) => {
+      console.log('created lobby, id:', data);
+      router.push(`/lobby/${data}`)
+    });
+  }
+
+  function createCollaborativeCanvasLobby() {
+    socket.emit("createCollaborativeCanvasLobby");
+    socket.on('collaborativeCanvasLobbyCreated', (data) => {
+      console.log('created lobby, id:', data);
+      router.push(`/collab/lobby/${data}`)
+    });
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="grow min-h-screen flex-col bg-black">
+      {/* navbar */}
+      <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
+        <div className="navbar-start">
+          <div className="navbar-center">
+            <a className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300">Ai Dungeon</a>
+          </div>
+          <div className="dropdown">
+            <Link
+              href='/'
+            >
+              <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                Home
+              </label>
+            </Link>
+            <Link
+              href='/gameMaster'
+            >
+              <label tabIndex="0" className={`btn btn-ghost hover:bg-transparent ${window.location.pathname == '/gameMaster' ? 'border-b-indigo-200 border-b-4 hover:border-b-indigo-200 hover:border-b-4' : ''} `}>
+                Game Master
+              </label>
+            </Link>
+          </div>
+          <div className="dropdown">
+            <label tabIndex="0" className="btn btn-ghost ">
+              Games
+            </label>
+            <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black text-white">
+              <li><a>Gamemode1</a></li>
+              <li><a>Gamemode2</a></li>
+              <li><a>GAMEMODE3!!</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="navbar-end">
+          <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 20 20" fill="black">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
+            </svg>
+            <p className=""> Play </p>
+          </button>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="bg-stone-800 pl-4 h-screen grid grid-cols-1 ">
+        <div className='pt-44'>
+          <h1 class="relative w-[max-content] font-mono before:absolute before:inset-0 before:animate-typewriter before:bg-stone-800  after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black text-7xl py-2"><p className=' text-slate-500'> AI</p>Powered Gaming</h1>
+        </div>
+        <div className=" animate-fadeIn delay-500">
+          <button className="bg-gradient-to-r from-indigo-300 to-indigo-100  text-black hover:from-indigo-200 hover:to-indigo-50 duration-300 flex p-4 rounded-xl text-4xl">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-10" viewBox="0 0 20 20" fill="black">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
+            </svg>
+            <p className="pl-2"> Start Your Experience  </p>
+          </button>
+        </div>
+        <div className="pt-24  text-left duration-700">
+          <div className=" w-full pr-8 grid grid-cols-3 gap-4" >
+            <button
+              className="w-full text-lg bg-transparent animate-fadeIn delay-0 hover:bg-stone-700 duration-300 rounded-2xl "
+              onClick={() => setIndex(0)}
+            >
+              AI Colab Drawing
+              <p className="text-sm">
+                Join friends to play a guessing game... with Ai
+              </p>
+            </button>
+            <button
+              className="w-full text-lg  animate-fadeIn delay-100 bg-transparent hover:bg-stone-700 duration-300 rounded-2xl "
+              onClick={() => setIndex(1)}
+            >
+              AI Colab Drawing
+              <p className="text-sm">
+                Join friends to play a guessing game... with Ai
+              </p>
+            </button>
+            <button
+              className="w-full text-lg bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
+              onClick={() => setIndex(2)}
+            >
+              AI Colab Drawing
+              <p className="text-sm">
+                Join friends to play a guessing game... with Ai
+              </p>
+            </button>
+          </div>
+        </div>
       </div>
     </main>
   );
