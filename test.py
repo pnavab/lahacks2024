@@ -1,10 +1,16 @@
-import PIL.Image
+import base64
+from PIL import Image
 
-img = PIL.Image.open('testpng.png')
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        image_data = img_file.read()
+        encoded_image = base64.b64encode(image_data)
+        return encoded_image.decode('utf-8')
 
-import google.generativeai as genai
-genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')
-model = genai.GenerativeModel(model_name="gemini-pro-vision")
 
-response = model.generate_content(["respond with one or two words that describe what the image is of. do not include any words describing or elaborating on your answer.", img])
-print(response)
+png_file_path = "testpng.png"
+
+
+base64_encoded_image = encode_image_to_base64(png_file_path)
+
+print("Base64 Encoded Image:\n", base64_encoded_image)
