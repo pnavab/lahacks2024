@@ -12,7 +12,7 @@ export default function Paint() {
     const [lobbyExists, setLobbyExists] = useState(true); //chnage to empty after testing
     const [joinedLobby, setJoinedLobby] = useState(false);
     const [guess, setGuess] = useState("Draw!!");
-    const [penSize, setPenSize] = useState(8);
+    const [penSize, setPenSize] = useState(5);
     const [color, setColor] = useState('#000000');
     const [prevX, setPrevX] = useState(null);
     const [prevY, setPrevY] = useState(null);
@@ -28,28 +28,35 @@ export default function Paint() {
     const isMounted = useRef(true);
     const params = useParams();
 
-    function joinCollaborativeCanvas() {
-        socket.emit("joinCollaborativeCanvas", username, params.id);
-        socket.on("joinedCollaborativeCanvas", (data) => {
-            setJoinedLobby(true);
-            console.log("current drawing is ", data);
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Create a new Image object
-            const img = new Image();
-
-            // Set the crossOrigin property to allow drawing the image on the canvas
-            img.crossOrigin = "Anonymous";
-
-            // Draw the image on the canvas once it has loaded
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0);
-            };
-
-            img.src = data;
+    function joinSoloCanvas() {
+        socket.emit("joinSoloCanvas", username, params.id);
+        socket.on("joinedSoloCanvas", (data) => {
+            
         })
+    }
+
+    function renderImage(username, data) {
+        // const img = new Image();
+
+        // // Set the crossOrigin property to allow drawing the image on the canvas
+        // img.crossOrigin = "Anonymous";
+
+        // // Draw the image on the canvas once it has loaded
+        // img.onload = () => {
+        //     ctx.drawImage(img, 0, 0);
+        // };
+
+        // img.src = data;
+        // const imageElement = document.getElementById(`drawing-${username}`);
+        // if (imageElement) {
+            //     imageElement.src = data;
+            // }
+        console.log("in renderImage data is", data);
+        const imageElement = document.getElementById(`drawing-${username}`);
+        if (imageElement) {
+            imageElement.src = data;
+        }
+        console.log("image element is", imageElement, "image element");
     }
 
     function choosePrompt() {
@@ -85,10 +92,6 @@ export default function Paint() {
             setTimer(false);
             setRemainingTime(null);
         }, timerTime * 1000); // After timerTime seconds, stop the timer
-    }
-
-    function updateSettings() {
-        setTimer();
     }
 
     async function guessDrawing() {
@@ -135,25 +138,16 @@ export default function Paint() {
             })
         }
 
-        const updateCollaborativeCanvas = (data) => {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-
-            ctx.beginPath();
-            ctx.strokeStyle = data.color;
-            ctx.lineWidth = data.penSize;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.moveTo(data.prevX, data.prevY);
-            ctx.lineTo(data.x, data.y);
-            ctx.stroke();
+        const updateSoloCanvas = (username, data, canvas) => {
+            console.log("in updateSoloCanvas", username, canvas);
+            renderImage(username, canvas);
         }
 
-        const clearCanvasForAll = (data) => {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
+        // const clearCanvasForAll = (data) => {
+        //     const canvas = canvasRef.current;
+        //     const ctx = canvas.getContext('2d');
+        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // }
 
         const handleLobbyUserUpdate = (data) => {
             console.log("received update", data);
@@ -162,15 +156,13 @@ export default function Paint() {
 
         checkIfLobbyIdValid();
 
-        socket.on("updateCollaborativeCanvas", updateCollaborativeCanvas);
-        socket.on("collaborativeCanvasUserUpdate", handleLobbyUserUpdate);
-        socket.on("clearCanvasForAll", clearCanvasForAll);
+        socket.on("updateSoloCanvas", updateSoloCanvas);
+        socket.on("soloCanvasUserUpdate", handleLobbyUserUpdate);
 
         // Clean up the event listener when the component unmounts
         return () => {
-            socket.off("updateCollaborativeCanvas", updateCollaborativeCanvas);
-            socket.off("collaborativeCanvasUserUpdate", handleLobbyUserUpdate);
-            socket.off("clearCanvasForAll", clearCanvasForAll);
+            socket.off("updateSoloCanvas", updateSoloCanvas);
+            socket.off("soloCanvasUserUpdate", handleLobbyUserUpdate);
         };
     }, []);
 
@@ -210,7 +202,7 @@ export default function Paint() {
             setPrevX(x);
             setPrevY(y);
 
-            socket.emit('drawingData', {
+            socket.emit('drawingSoloData', {
                 prevX,
                 prevY,
                 x,
@@ -218,8 +210,9 @@ export default function Paint() {
                 color,
                 penSize
             },
+                username,
                 canvas.toDataURL(),
-                params.id
+                params.id,
             );
         };
 
@@ -240,7 +233,6 @@ export default function Paint() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        socket.emit('clearCanvas', params.id);
     };
 
     return (
@@ -272,13 +264,14 @@ export default function Paint() {
                     </button>
                 </div>
             </div>
-            {/* NavBar Ends Here */}
+            {/* lobby info starts here */}
             {lobbyExists
                 ?
-                <div id='lobby-exists' className='text-left flex justify-start gap-20 mx-20'> 
-                    <div className="text-black pt-20 items-center w-48 pl-3"> {/* Left Column */}
+                <div id='lobby-exists' className='text-left flex justify-start gap-8 mx-8'>
 
-                        <button className='bg-gray-300 rounded-md px-5 py-2 duration-200 hover:bg-gray-400' onClick={startRound}>Start Round</button>
+                    <div className="text-black pt-20 items-center w-48"> {/* Left Column */}
+
+                        <button className='bg-gray-300 rounded-md px-5 py-2 duration-200 hover:bg-gray-400 w-fill' onClick={startRound}>Start Round</button>
                         <div className='mt-20 border-sm border-black bg-gray-100 rounded-md'>
                             {prompt && (
                                 <div className="border-b border-black">
@@ -297,21 +290,21 @@ export default function Paint() {
                             )}
                         </div>
                     </div>
-                    <div> {/* Canvas Middle Column */}
+                    <div>
                         <div className="row mt-3 pl-10">
                             <div className='grid grid-cols-2 w-full justify-between'>
                                 {!joinedLobby &&
                                     <div className='pb-4'>
                                         <input placeholder='username' className='px-5 py-2 border-none bg-white text-black rounded-l-md' onChange={(e) => setUsername(e.target.value)}></input>
-                                        <button className='bg-gray-300 px-5 py-2 duration-200 rounded-r-md hover:bg-gray-400' onClick={joinCollaborativeCanvas}>Join Lobby</button>
+                                        <button className='bg-gray-300 rounded-r-md px-5 py-2 duration-200 hover:bg-gray-400' onClick={joinSoloCanvas}>Join Lobby</button>
                                     </div>
                                 }
                                 <div>
-                                    <button className='bg-gray-300  px-5 py-2 mb-3 rounded-md duration-200 hover:bg-gray-400' onClick={copyUrlToClipboard} onMouseEnter={(event) => {event.target.innerText = window.location.href}} onMouseLeave={(event) => {event.target.innerText = 'Copy Invite Link'}}>Copy Invite Link</button>
+                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={copyUrlToClipboard} onMouseEnter={(event) => {event.target.innerText = window.location.href}} onMouseLeave={(event) => {event.target.innerText = 'Copy Invite Link'}}>Copy Invite Link</button>
                                 </div>
                             </div>
                             <div className='canvas w-full '>
-                                <canvas ref={canvasRef} width={800} height={600} className='bg-white rounded-md border-black hover:cursor-crosshair'></canvas>
+                                <canvas ref={canvasRef} width={800} height={600} className='bg-white rounded-sm border-black hover:cursor-crosshair'></canvas>
                                 <div className='flex flex-row items-center gap-32 mt-4'>
                                     <div className="colors relative" data-tooltip="Left-/Rightclick to choose a color!" data-tooltipdir="S">
                                             <div className="top flex ">
@@ -355,26 +348,26 @@ export default function Paint() {
                                     <button onClick={clearCanvas} className='bg-gray-300 px-5 py-2 rounded-sm duration-200 hover:cursor-grab hover:bg-gray-400 '>Clear</button>
 
                                 </div>
+
                             </div>
-                           
                             {/* )} */}
                         </div>
                     </div>
-                    <div className='mt-[100px] w-full flex flex-col items-center mb-auto'>
-                    {connectedUsers.length > 0 ?
-                        <h1 className='text-center w-full px-4 py-2 bg-gray-300 rounded-t-md'>Connected:</h1>
-                        :
-                        <h1 className='text-center w-full px-4 py-2 bg-gray-200 rounded-md'>No One Joined Yet!</h1>
-                    }
-                    <div className="grid grid-cols-1 w-full">
-                        {connectedUsers.map((user, index) => (
-                            <div key={index} className={`text-black ${index === connectedUsers.length - 1 ? 'rounded-b-md' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full`}>
-                                <h1 className='px-3 py-2'>{user}</h1>
+                    <div className='mt-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
+                        <div className="w-full">
+                            {connectedUsers.length > 0 ?
+                                <h1 className={`text-center w-full px-4 py-2 bg-gray-300 ${connectedUsers.length > 1 ? "rounded-t-md" : "rounded-md"}`}>Connected:</h1>
+                                :
+                                <h1 className="text-center w-full px-4 py-2 bg-gray-200 rounded-md"> No One Joined Yet! </h1>
+                            }
+                        </div>
+                        {connectedUsers.filter(user => user != username).map((user, index) => (
+                            <div key={index} className={`text-black bg-gray-100 w-full`}>
+                                <h1 className='pl-3'>{user}:</h1>
+                                <img className={`bg-white`} id={`drawing-${user}`} alt={`${user}'s drawing`} />
                             </div>
                         ))}
                     </div>
-                </div>
-
 
                     <div>
                         <div id='settings' className="absolute top-0 right-0">
