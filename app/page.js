@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  function createLobby() {
+  function createStoryLobby() {
     socket.emit("createLobby");
     socket.on('lobbyCreated', (data) => {
       console.log('created lobby, id:', data);
@@ -20,6 +20,14 @@ export default function Home() {
     socket.on('collaborativeCanvasLobbyCreated', (data) => {
       console.log('created lobby, id:', data);
       router.push(`/collab/lobby/${data}`)
+    });
+  }
+
+  function createVersusLobby() {
+    socket.emit("createSoloCanvasLobby");
+    socket.on('soloCanvasLobbyCreated', (data) => {
+      console.log('created lobby, id:', data);
+      router.push(`/versus/lobby/${data}`)
     });
   }
 
@@ -85,27 +93,27 @@ export default function Home() {
           <div className=" w-full pr-8 grid grid-cols-3 gap-4" >
             <button
               className="w-full text-lg bg-transparent animate-fadeIn delay-0 hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={() => setIndex(0)}
+              onClick={createCollaborativeCanvasLobby}
             >
-              AI Colab Drawing
+              AI Collab Drawing
               <p className="text-sm">
-                Join friends to play a guessing game... with Ai
+                Join friends to play a guessing game where you all draw together
               </p>
             </button>
             <button
               className="w-full text-lg  animate-fadeIn delay-100 bg-transparent hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={() => setIndex(1)}
+              onClick={createVersusLobby}
             >
-              AI Colab Drawing
+              Versus Drawing Game with AI
               <p className="text-sm">
-                Join friends to play a guessing game... with Ai
+                versus drawing game
               </p>
             </button>
             <button
               className="w-full text-lg bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={() => setIndex(2)}
+              onClick={createStoryLobby}
             >
-              AI Colab Drawing
+              Storytelling mode
               <p className="text-sm">
                 Join friends to play a guessing game... with Ai
               </p>
