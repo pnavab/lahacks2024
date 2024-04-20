@@ -78,7 +78,7 @@ export default function Home() {
 
 
         async function generateQrCode() {
-            const response = await fetch("http://localhost:3000/api/qr", {
+            const response = await fetch("/api/qr", {
                 "body": JSON.stringify({ domain: window.location.href }),
                 "method": "POST"
             });

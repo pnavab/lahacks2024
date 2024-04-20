@@ -97,7 +97,7 @@ export default function Paint() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const image = canvas.toDataURL('image/png');
-        const response = await fetch("http://localhost:3000/api/guess_image", {
+        const response = await fetch("/api/guess_image", {
             "body": JSON.stringify({ 'image': image, 'username': username }),
             "method": "POST"
         });
