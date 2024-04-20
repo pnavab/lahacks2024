@@ -224,11 +224,7 @@ export default function Home() {
                                         <button onClick={genImageWithText}> Go </button>
                                         <input value={story}/> 
                                         <div className="text-black items-center ml-auto mr-auto">
-                                            {connectedUsers.map((user, index) => (
-                                                <div key={index} className="m-3 rounded-md items-center bg-gray-50">
-                                                    <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
-                                                </div>
-                                            ))}
+                                            {/* /LONG STORY SHIT HERE */}
                                         </div>
                                     </div>
                                     </>
