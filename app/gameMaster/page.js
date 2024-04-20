@@ -76,8 +76,8 @@ export default function Home() {
                 <p className="text-7xl font-bold"> Game Master </p>
                 <div className="flex justify-center text-center pt-4 ">
                     <input placeholder={'What Game do You want to Experience                            ↵ '} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
-                    {/* Response */}
                 </div>
+                {/* Response */}
                 <input disabled placeholder={`${response}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
             </div>
         </main>
