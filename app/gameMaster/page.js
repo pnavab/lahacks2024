@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
-    const [recommendationResponse, setRecommendationResponse] = useState();
+    const [recommendationResponse, setRecommendationResponse] = useState('');
+    const [userInput, setUserInput] = useState('');
     const router = useRouter();
 
     function createLobby() {
@@ -19,10 +20,31 @@ export default function Home() {
 
     async function getRecommendation() {
         setRecommendationResponse('Thinking...');
-        const response = await fetch('http://localhost:8000/game_master');
-        const data = await response.json();
-        console.log(data);
-        setRecommendationResponse(data);
+        const response = await fetch("http://localhost:8000/game_master", {
+            "body": JSON.stringify({ 'message': userInput }),
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "method": "POST"
+        });
+        let data = await response.json();
+        data = data[0];
+        console.log(typeof(data));
+        if (data == "0") {
+            setRecommendationResponse("Your input wasn't very clear, please try again.")
+        }
+        else if (data == "1") {
+            setRecommendationResponse("My curated pick for you: an AI powered story generator collaborative game.")
+        }
+        else if (data == "2") {
+            setRecommendationResponse("A team player! I have selected a collaborative drawing game where all players will draw and try to beat the clock.")
+        }
+        else if (data == "3") {
+            setRecommendationResponse("You seem to be a competitive person! I have selected a drawing game where you will compete against other players, racing against the clock.")
+        }
+        else {
+            setRecommendationResponse("I could not process your request :( Please try again.")
+        }
     }
 
     function handleEnter(e) {
@@ -39,7 +61,6 @@ export default function Home() {
         });
     }
 
-    const [response, setResponse] = useState('Thinking...')
 
     return (
         <main className="grow min-h-screen flex-col bg-black">
@@ -90,10 +111,10 @@ export default function Home() {
             <div className="bg-stone-800 font-mono pl-4 pt-44 text-center h-screen w-full">
                 <p className="text-7xl font-bold"> Game Master </p>
                 <div className="flex justify-center text-center pt-4 ">
-                    <input placeholder={'What Game do You want to Experience                            ↵ '} onKeyDown={handleEnter} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
+                    <input placeholder={'What Game do You want to Experience                            ↵ '} onKeyDown={handleEnter} onChange={(e) => {setUserInput(e.target.value)}} className='w-1/2 py-4 rounded-full bg-black text-right pr-6' />
                 </div>
                 {/* Response */}
-                <input disabled placeholder={`${response}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
+                <textarea rows={8} disabled placeholder={`${recommendationResponse}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
             </div>
         </main>
     );

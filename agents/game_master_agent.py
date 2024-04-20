@@ -50,7 +50,7 @@ async def query_handler(ctx: Context, sender: str, _query: TestRequest):
     game2 = "A collaborative drawing game where all players will draw on the same canvas in a limited amount of time. There is a random prompt and players will have to hurry to draw the prompt before the time runs out. AI will then try to guess what the drawing is and see if it resembles the original prompt to earn a point."
     game3 = "A competitive game where all players are given the same prompt to draw and each will draw their own version. The AI will then try to guess what each drawing is and see if it resembles the original prompt to earn a point. The player with the most points at the end of the game wins."
     try:
-        prompt = f"Your role is as a game master. You will be in charge of assigning games to the user based on the following interests they have expressed: {_query.message}. Here are the game options you can assign to the user: \n1. {game1}\n2. {game2}\n3. {game3}. Please select the game you would like to assign to the user by returning ONLY the number of the game with no punctuation."
+        prompt = f"Your role is as a game master. You will be in charge of assigning games to the user based on the following interests they have expressed: {_query.message}. Here are the game options you can assign to the user: \n1. {game1}\n2. {game2}\n3. {game3}. Please select the game you would like to assign to the user by returning ONLY the number of the game with no punctuation. If nothing matches, return '0'."
         response = model.generate_content(prompt)
         response = response.text
         ctx.logger.info(f"{response}")

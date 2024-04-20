@@ -1,8 +1,19 @@
 import json
-
+import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from uagents import Model
 from uagents.query import query
+
+app = FastAPI()
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DRAWING_AGENT_ADDRESS = "agent1qwqhyvxj9tpzflh9g47fk9w2wjfr5m5ctdsddt6npxwsk5veexujjtw9738"
 GAME_MASTER_ADDRESS = "agent1q0l63cezc6udwjk9yzjyd7cwf9g9u36xuglm4ut7p457l7qvfvypjg7ty4w"
@@ -28,8 +39,6 @@ async def game_master_query(req):
     return data["text"]
 
 
-app = FastAPI()
-
 
 @app.get("/")
 def read_root():
@@ -51,3 +60,4 @@ async def game_master_call(req: TestRequest):
         return {res}
     except Exception:
         return "unsuccessful agent call"
+    
