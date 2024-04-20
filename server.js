@@ -226,6 +226,33 @@ app.prepare().then(() => {
       }
     });
 
+    socket.on('setPrompt', (lobbyId, prompt) => {
+      let id = parseInt(lobbyId);
+      let lobby = LOBBIES.get(id);
+      if (lobby) {
+        console.log("setting prompt", prompt);
+        io.in(id).emit('updatePrompt', prompt);
+      }
+    });
+
+    socket.on('startTimer', (lobbyId, timerTime) => {
+      let id = parseInt(lobbyId);
+      let lobby = LOBBIES.get(id);
+      if (lobby) {
+        console.log("starting timer", timerTime);
+        io.in(id).emit('startTimerForAll', timerTime);
+      }
+    });
+
+    socket.on('startVersusRound', (lobbyId, timerTime) => {
+      let id = parseInt(lobbyId);
+      let lobby = LOBBIES.get(id);
+      if (lobby) {
+        console.log("starting versus round");
+        io.in(id).emit('startVersusRoundForAll', timerTime);
+      }  
+    });
+
     // ALL GARTIC PHONE RIPOFF LOGIC
     socket.on('createPhoneLobby', () => {
       const id = generateLobbyId(); // Generate a unique lobby ID

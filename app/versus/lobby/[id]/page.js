@@ -51,34 +51,39 @@ export default function Paint() {
             prompts = useOnlyCustomWords ? customSplit : prompts.concat(customSplit);
         }
         const randomIndex = Math.floor(Math.random() * prompts.length);
-        setPrompt(prompts[randomIndex]);
+        const prompt = (prompts[randomIndex]);
+        // setPrompt(prompt);
+        socket.emit("setPrompt", params.id, prompt);
+        return prompt;
     }
-
+    
     function startRound() {
-        clearCanvas();
-        socket.emit("clearCanvas", params.id);
+        socket.emit('startVersusRound', params.id, timerTime);
+        // clearCanvas();
+        // socket.emit("clearCanvas", params.id);
+        // socket.emit("startTimer", params.id, timerTime);
         
-        choosePrompt();
-        setTimer(true);
-        setRemainingTime(timerTime);
-        setGameState("drawing");
-        const intervalId = setInterval(() => {
-            setRemainingTime((prevTime) => {
-                if (prevTime <= 1) {
-                    clearInterval(intervalId); // Clear the interval when time is up
-                    return 0;
-                } else {
-                    return prevTime - 1;
-                }
-            });
-        }, 1000); // Decrease every second
-        setTimeout(() => {
-            if (isMounted.current) {
-                guessDrawing();
-            }
-            setTimer(false);
-            setRemainingTime(null);
-        }, timerTime * 1000); // After timerTime seconds, stop the timer
+        // choosePrompt();
+        
+
+        // setGameState("drawing");
+        // const intervalId = setInterval(() => {
+        //     setRemainingTime((prevTime) => {
+        //         if (prevTime <= 1) {
+        //             clearInterval(intervalId); // Clear the interval when time is up
+        //             return 0;
+        //         } else {
+        //             return prevTime - 1;
+        //         }
+        //     });
+        // }, 1000); // Decrease every second
+        // setTimeout(() => {
+        //     if (isMounted.current) {
+        //         guessDrawing();
+        //     }
+        //     setTimer(false);
+        //     setRemainingTime(null);
+        // }, timerTime * 1000); // After timerTime seconds, stop the timer
     }
 
     async function guessDrawing() {
@@ -141,17 +146,77 @@ export default function Paint() {
             setConnectedUsers(data);
         };
 
+        const updatePrompt = (data) => {
+            console.log("received prompt", data)
+            setPrompt(data);
+        }
+
+        const startTime = (data) => {
+            console.log("starting timer...");
+            setTimer(true);
+            setRemainingTime(timerTime);
+            const intervalId = setInterval(() => {
+                setRemainingTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(intervalId); // Clear the interval when time is up
+                        return 0;
+                    } else {
+                        return prevTime - 1;
+                    }
+                });
+            }, 1000); // Decrease every second
+            setTimeout(() => {
+                if (isMounted.current) {
+                    guessDrawing();
+                }
+                setTimer(false);
+                setRemainingTime(null);
+            }, timerTime * 1000); // After timerTime seconds, stop the timer
+        }
+
+        const startVersusRoundForAll = (data) => {
+            console.log("starting round for all...");
+            clearCanvas();
+            choosePrompt();
+            setTimer(true);
+            setRemainingTime(timerTime);
+            setGameState("drawing");
+            const intervalId = setInterval(() => {
+                setRemainingTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(intervalId); // Clear the interval when time is up
+                        return 0;
+                    } else {
+                        return prevTime - 1;
+                    }
+                });
+            }, 1000); // Decrease every second
+            setTimeout(() => {
+                if (isMounted.current) {
+                    guessDrawing();
+                }
+                setTimer(false);
+                setRemainingTime(null);
+            }, timerTime * 1000); // After timerTime seconds, stop the timer
+        }
+
+
         checkIfLobbyIdValid();
 
         socket.on("updateSoloCanvas", updateSoloCanvas);
         socket.on("soloCanvasUserUpdate", handleLobbyUserUpdate);
         socket.on("clearCanvasForAll", clearCanvasForAll);
+        socket.on("updatePrompt", updatePrompt);
+        socket.on("startTimerForAll", startTime);
+        socket.on("startVersusRoundForAll", startVersusRoundForAll);
         
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("updateSoloCanvas", updateSoloCanvas);
             socket.off("soloCanvasUserUpdate", handleLobbyUserUpdate);
             socket.off("clearCanvasForAll", clearCanvasForAll);
+            socket.off("updatePrompt", updatePrompt);
+            socket.off("startVersusRoundForAll", startVersusRoundForAll);
         };
     }, []);
 
