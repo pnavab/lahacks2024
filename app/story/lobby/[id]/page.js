@@ -15,18 +15,37 @@ export default function Home() {
 
     const router = useRouter();
     const params = useParams();
+    
+    const [avatarText, setAvatarText] = useState('')
+    
+    const [isStoryTime, setIsStoryTime] = useState(false)
 
-    const [avatarText, setAvatarText] = useState('Not Set Yet')
+    const [storyText, setStoryText] = useState('')
+
+    const [story, setStory] = useState('')
 
     function assignAvatar() {
 
 
-        // Generate Image here
+
+        // Generate Image here Et here
+
+        if(avatarText !== '') setIsStoryTime(true)
 
         console.log("in assignAvatar button")
         console.log('button clicked', avatarText)
 
         socket.emit("updateAvatar", username, params.id, avatarText)
+    }
+
+    function genImageWithText(){
+
+        // Gen Story Image here Et here
+
+        console.log("in genImageWithText button")
+        console.log('genImageWithText button clicked', storyText)
+
+        socket.emit("updateStory", username, params.id, storyText)
     }
 
     function joinLobby() {
@@ -37,6 +56,7 @@ export default function Home() {
             setJoinedLobby(true);
         });
     }
+
 
     useEffect(() => {
         function checkIfLobbyIdValid() {
@@ -69,10 +89,10 @@ export default function Home() {
             setConnectedUsers(data);
         };
 
-        
         const handleAvatarUpdate = (username, avatarUrl) => {
             // console.log("received update setting users here", [username, avatarUrl]);
             console.log('avatar', avatarUrl)
+            
             const imageElement = document.getElementById(`avatar-${username}`);
             console.log('imageElement', imageElement)
             if (imageElement) {
@@ -80,14 +100,22 @@ export default function Home() {
             }
         };
 
+        const handleStoryUpdate = (data) => {
+            console.log("received update story image here", data);
+            console.log('ASDASDASD',story)
+            setStory(story + data)
+        }
+
 
 
         checkIfLobbyIdValid();
         generateQrCode();
-        assignAvatar()
+        assignAvatar();
+        genImageWithText();
 
         socket.on("lobbyUpdate", handleLobbyUpdate);
         socket.on("lobbyAvatarUpdate", handleAvatarUpdate);
+        socket.on("lobbyStoryUpdate", handleStoryUpdate);
 
         // Clean up the event listener when the component unmounts
         return () => {
@@ -149,7 +177,7 @@ export default function Home() {
             {lobbyExists
                 ? <div className="flex flex-col items-center pt-20">
 
-
+                    
                     {!joinedLobby && (
                         <div className="row mt-3 mb-80">
                             <input placeholder='username' onChange={(e) => setUsername(e.target.value)}></input>
@@ -162,12 +190,24 @@ export default function Home() {
                         {/* where client's avatar will go */}
                     </div>
                     <div>
-                        <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
-                        <button onClick={assignAvatar}> Gofcvrtgv </button>
+                        {isStoryTime ? 
+                            <>
+                                <input placeholder="Type To Add On Story!" value={storyText} onChange={e => setStoryText(e.target.value)}/>
+                                <button onClick={genImageWithText}> Go </button>
+                                <input disabled value={story}/>
+                            </>
+                            : 
+                            <>
+                                <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
+                                <button onClick={assignAvatar}> Go </button>
+                            </>
+                        } 
                     </div>
+
+                    <p> </p> 
+
                     <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
                         <div className="text-black flex flex-row items-center ml-auto mr-auto">
-                            {console.log(connectedUsers, 'asdasd')}
 
                             {connectedUsers.map((user, index) => (
                                 <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
