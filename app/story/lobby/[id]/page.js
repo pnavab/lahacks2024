@@ -19,8 +19,8 @@ export default function Home() {
     const [avatarText, setAvatarText] = useState('')
     const [isLobbyTime, setIsLobbyTime] = useState(false)
     const [isStoryTime, setIsStoryTime] = useState(false)
-    const [storyText, setStoryText] = useState('')
-    const [story, setStory] = useState('')
+    const [storyPrompt, setStoryPrompt] = useState('')
+    const [storyContext, setStoryContext] = useState([])
 
     function assignAvatar() {
 
@@ -37,14 +37,13 @@ export default function Home() {
         socket.emit("updateAvatar", username, params.id, avatarText)
     }
 
-    function genImageWithText() {
+    function sendPromptToGenerateImage() {
 
         // Gen Story Image here Et here
 
-        console.log("in genImageWithText button")
-        console.log('genImageWithText button clicked', storyText)
+        console.log('sendPromptToGenerateImage button clicked', storyPrompt)
 
-        socket.emit("updateStory", username, params.id, storyText)
+        socket.emit("updateStory", username, params.id, storyPrompt)
     }
 
     function joinLobby() {
@@ -102,7 +101,7 @@ export default function Home() {
             }
         };
         
-        const handleStoryUpdate = (data) => {
+        const updateStory = (data) => {
             console.log("received update story image here", data);
             console.log('ASDASDASD', story)
             setStory(story + data)
@@ -110,27 +109,35 @@ export default function Home() {
         
         const handleStartStoryModeForAll = (data) => {
             console.log("received update story image here", data);
-            setIsLobbyTime(false)
-            setIsStoryTime(true)
+            setIsLobbyTime(false);
+            setIsStoryTime(true);
+            setStoryContext(data);
         }
 
+        const handleUpdateStoryForAll = (data) => {
+            console.log("received update story image here", data);
+            setStoryContext(storyContext => [...storyContext, data]);
+            console.log("story context is now", storyContext);
+        }
 
         checkIfLobbyIdValid();
         generateQrCode();
         assignAvatar();
-        genImageWithText();
+        sendPromptToGenerateImage();
 
         socket.on("lobbyUpdate", handleLobbyUpdate);
         socket.on("lobbyAvatarUpdate", handleAvatarUpdate);
-        socket.on("lobbyStoryUpdate", handleStoryUpdate);
+        socket.on("updateStory", updateStory);
         socket.on("startStoryModeForAll", handleStartStoryModeForAll);
+        socket.on("updateStoryForAll", handleUpdateStoryForAll);
         
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("lobbyUpdate", handleLobbyUpdate);
             socket.off("lobbyAvatarUpdate", handleAvatarUpdate);
-            socket.off("lobbyStoryUpdate", handleStoryUpdate);
+            socket.off("updateStory", updateStory);
             socket.off("startStoryModeForAll", handleStartStoryModeForAll);
+            socket.off("updateStoryForAll", handleUpdateStoryForAll);
         };
     }, []);
 
@@ -203,7 +210,7 @@ export default function Home() {
                                         <button className="btn btn-secondary" onClick={startStoryMode}>Start Story</button>
                                     </div>
                                 </div>
-                                <input disabled value={story} />
+                                {/* <input disabled value={story} /> */}
                                 <div className="flex flex-row items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
                                     <div className="text-black flex flex-row items-center ml-auto mr-auto">
                                         {connectedUsers.map((user, index) => (
@@ -213,11 +220,6 @@ export default function Home() {
                                         ))}
                                     </div>
                                 </div>
-                                {qrCode && (
-                                    <div>
-                                        <img src={qrCode} alt='qr code' height={200} width={200} />
-                                    </div>
-                                )}
                             </div>
                             :
                             <>
@@ -225,15 +227,23 @@ export default function Home() {
                                     isStoryTime ?
                                     <>
                                         <div id="main story strip" className="flex flex-row-reverse items-center mt-28 w-[80vw] h-[65vh] overflow-x-scroll bg-gray-200">
-                                            <input value={story}/> 
-                                            <div className="text-black items-center ml-auto mr-auto">
-                                                {/* /LONG STORY SHIT HERE */}
+                                            <div className="text-black flex flex-row-reverse overflow-x-scroll overflow-y-scroll items-center ml-auto mr-auto">
+                                                {storyContext.map((storyPoint, index) => (
+                                                    <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
+                                                        {/* <img className='bg-white w-[400px] h-[400px]' src={storyPoint} /> */}
+                                                        {typeof storyPoint === 'string' ? (
+                                                            <p>{storyPoint}</p>
+                                                        ) : (
+                                                            <img className='bg-white w-[400px] h-[400px]' src={'/1.png'} />
+                                                        )}
+                                                    </div>
+                                                ))}
                                             </div>
                                             {/* MAP ALL CHATS AND STORIES */}
                                         </div>
                                         <div>
-                                            <input placeholder="Type To Add On Story!" value={storyText} onChange={e => setStoryText(e.target.value)} />
-                                            <button onClick={genImageWithText}> Go </button>
+                                            <input placeholder="Type To Add On Story!" value={storyPrompt} onChange={e => setStoryPrompt(e.target.value)} />
+                                            <button onClick={sendPromptToGenerateImage}> Go </button>
                                         </div>
                                     </>
                                     :
