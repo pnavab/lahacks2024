@@ -85,11 +85,11 @@ export default function Home() {
           <div className=" w-full pr-8 grid grid-cols-3 gap-4" >
             <button
               className="w-full text-lg bg-transparent animate-fadeIn delay-0 hover:bg-stone-700 duration-300 rounded-2xl "
-              onClick={() => setIndex(0)}
+              onClick={createCollaborativeCanvasLobby}
             >
-              AI Colab Drawing
+              AI Collab Drawing
               <p className="text-sm">
-                Join friends to play a guessing game... with Ai
+                Join friends to play a guessing game where you all draw together
               </p>
             </button>
             <button
