@@ -56,6 +56,8 @@ export default function Paint() {
 
     function startRound() {
         clearCanvas();
+        socket.emit("clearCanvas", params.id);
+        
         choosePrompt();
         setTimer(true);
         setRemainingTime(timerTime);
@@ -128,11 +130,11 @@ export default function Paint() {
             renderImage(username, canvas);
         }
 
-        // const clearCanvasForAll = (data) => {
-        //     const canvas = canvasRef.current;
-        //     const ctx = canvas.getContext('2d');
-        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // }
+        const clearCanvasForAll = (data) => {
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
         const handleLobbyUserUpdate = (data) => {
             console.log("received update", data);
@@ -143,11 +145,13 @@ export default function Paint() {
 
         socket.on("updateSoloCanvas", updateSoloCanvas);
         socket.on("soloCanvasUserUpdate", handleLobbyUserUpdate);
-
+        socket.on("clearCanvasForAll", clearCanvasForAll);
+        
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("updateSoloCanvas", updateSoloCanvas);
             socket.off("soloCanvasUserUpdate", handleLobbyUserUpdate);
+            socket.off("clearCanvasForAll", clearCanvasForAll);
         };
     }, []);
 
