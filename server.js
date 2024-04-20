@@ -98,6 +98,14 @@ app.prepare().then(() => {
         socket.emit('lobbyFound', false);
       }
     });
+
+    socket.on('startStoryMode', (lobbyId) => {
+      let id = parseInt(lobbyId);
+      const lobby = LOBBIES.get(id);
+      if (lobby) {
+        io.in(id).emit('startStoryModeForAll');
+      }
+    });
     
     // ALL COLLABORATIVE CANVAS SOCKET LOGIC
     socket.on('checkCollaborativeCanvasLobbyExists', (lobbyId) => {

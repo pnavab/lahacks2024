@@ -58,11 +58,10 @@ export default function Home() {
     }
 
     function startStoryMode() {
-        setIsLobbyTime(false)
-        setIsStoryTime(true)
+        socket.emit("startStoryMode", params.id);
     }
-
-
+    
+    
     useEffect(() => {
         function checkIfLobbyIdValid() {
             console.log(params.id);
@@ -73,7 +72,7 @@ export default function Home() {
                 setLobbyExists(true);
             })
         }
-
+        
         async function generateQrCode() {
             const response = await fetch("/api/qr", {
                 "body": JSON.stringify({ domain: window.location.href }),
@@ -102,11 +101,17 @@ export default function Home() {
                 imageElement.src = '/1.png';
             }
         };
-
+        
         const handleStoryUpdate = (data) => {
             console.log("received update story image here", data);
             console.log('ASDASDASD', story)
             setStory(story + data)
+        }
+        
+        const handleStartStoryModeForAll = (data) => {
+            console.log("received update story image here", data);
+            setIsLobbyTime(false)
+            setIsStoryTime(true)
         }
 
 
@@ -118,12 +123,14 @@ export default function Home() {
         socket.on("lobbyUpdate", handleLobbyUpdate);
         socket.on("lobbyAvatarUpdate", handleAvatarUpdate);
         socket.on("lobbyStoryUpdate", handleStoryUpdate);
-
+        socket.on("startStoryModeForAll", handleStartStoryModeForAll);
+        
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("lobbyUpdate", handleLobbyUpdate);
             socket.off("lobbyAvatarUpdate", handleAvatarUpdate);
             socket.off("lobbyStoryUpdate", handleStoryUpdate);
+            socket.off("startStoryModeForAll", handleStartStoryModeForAll);
         };
     }, []);
 
@@ -217,7 +224,7 @@ export default function Home() {
                                 {
                                     isStoryTime ?
                                     <>
-                                        <div id="main story strip" className="flex flex-row-reverse items-center mt-1/3 w-[80vw] h-[65vh] overflow-x-scroll bg-gray-200">
+                                        <div id="main story strip" className="flex flex-row-reverse items-center mt-28 w-[80vw] h-[65vh] overflow-x-scroll bg-gray-200">
                                             <input value={story}/> 
                                             <div className="text-black items-center ml-auto mr-auto">
                                                 {/* /LONG STORY SHIT HERE */}
