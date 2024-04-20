@@ -2,7 +2,7 @@ from uagents import Agent, Context, Model
 
 import google.generativeai as genai
 import re
-class Request(Model):
+class Request1(Model):
     guessed: str
     correct: str
 
@@ -24,21 +24,24 @@ async def startup(ctx: Context):
     ctx.logger.info(f"With address: {validator_agent.address}")
 
 
-@validator_agent.on_query(model=Request, replies={Response})
-async def query_handler(ctx: Context, sender: str, _query: Request):
+@validator_agent.on_query(model=Request1, replies={Response})
+async def query_handler(ctx: Context, sender: str, _query: Request1):
     ctx.logger.info("Query received")
-    try:
+    # try:
+        # print("TESTSTST")
         # do something here
-        genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')
-        model = genai.GenerativeModel(model_name="gemini-pro-vision")
-        response = model.generate_content("true or false: is it understandable that a smart person would mix up {_query.guessed} with {_query.correct} when playing pictionary")
-        matches = re.search(response, "[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]")
-        if(matches == None):
-            await ctx.send(sender, Response(text="fail"))
-        else:
-            await ctx.send(sender, Response(text=matches.group().lower()))
-    except Exception:
+    genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')
+    model = genai.GenerativeModel(model_name="gemini-pro")
+    response = model.generate_content(f"true or false: is it understandable that a smart person would mix up {_query.guessed} with {_query.correct} when playing pictionary")
+    print(response.text + "TESTSTS GEMINI res")
+    matches = re.search("[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]", response.text)
+    if(matches == None):
         await ctx.send(sender, Response(text="fail"))
+    else:
+        await ctx.send(sender, Response(text=matches.group().lower()))
+    # except Exception as e:
+    #     print("ERRR1" + str(e))
+    #     await ctx.send(sender, Response(text="fail"))
 
 
 if __name__ == "__main__":
