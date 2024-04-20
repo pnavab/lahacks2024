@@ -66,13 +66,13 @@ export default function Home() {
         // Set up the 'lobbyUpdate' event listener
         const handleLobbyUpdate = (data) => {
             console.log("received update setting users here", data);
-            setConnectedUsers([data]);
+            setConnectedUsers(data);
         };
 
         
         const handleAvatarUpdate = (username, avatarUrl) => {
             // console.log("received update setting users here", [username, avatarUrl]);
-            console.log('avatarUrl', avatarUrl)
+            console.log('avatar', avatarUrl)
             const imageElement = document.getElementById(`avatar-${username}`);
             console.log('imageElement', imageElement)
             if (imageElement) {
@@ -168,6 +168,7 @@ export default function Home() {
                     <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
                         <div className="text-black flex flex-row items-center ml-auto mr-auto">
                             {console.log(connectedUsers, 'asdasd')}
+
                             {connectedUsers.map((user, index) => (
                                 <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
                                     <p>User: {user}</p>
