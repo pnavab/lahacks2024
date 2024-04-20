@@ -104,7 +104,7 @@ export default function Home() {
               className="w-full text-lg  animate-fadeIn delay-100 bg-transparent hover:bg-stone-700 duration-300 rounded-2xl "
               onClick={createVersusLobby}
             >
-              AI Colab Drawing
+              Versus Drawing Game with AI
               <p className="text-sm">
                 versus drawing game
               </p>
@@ -113,7 +113,7 @@ export default function Home() {
               className="w-full text-lg bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
               onClick={createStoryLobby}
             >
-              AI Colab Drawing
+              Storytelling mode
               <p className="text-sm">
                 Join friends to play a guessing game... with Ai
               </p>

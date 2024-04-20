@@ -25,6 +25,13 @@ export default function Home() {
         setRecommendationResponse(data);
     }
 
+    function handleEnter(e) {
+        e.preventDefault();
+        if (e.key === 'Enter') {
+            getRecommendation();
+        }
+    }
+
     function createCollaborativeCanvasLobby() {
         socket.emit("createCollaborativeCanvasLobby");
         socket.on('collaborativeCanvasLobbyCreated', (data) => {
