@@ -16,6 +16,19 @@ function generateLobbyId() {
     return Math.floor(Math.random()*90000) + 10000;
 }
 
+function getImageFromPrompt(prompt) {
+  // call the api endpoint to generate an image from the prompt
+  // return the generated image
+  return "this is an ai generated response"
+}
+
+function getResponseFromPrompt(prompt) {
+  // call the api endpoint to generate a response from the prompt
+  // return the generated response
+  return "this is an ai generated response"
+
+}
+
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
@@ -30,7 +43,7 @@ app.prepare().then(() => {
 
     socket.on('createLobby', () => {
       const id = generateLobbyId(); // Generate a unique lobby ID
-      const lobby = { id: id, clients: [] };
+      const lobby = { id: id, clients: [], context: ["testing hello 1 2 3", 1, "second testing 1 2 3", 1, "third testing 1 2 3 long long ltesting ", 1, "lots of testing"] };
       LOBBIES.set(id, lobby);
       socket.join(id);
       socket.emit('lobbyCreated', id);
@@ -76,11 +89,14 @@ app.prepare().then(() => {
     });
 
     socket.on('updateStory', (username, lobbyId, updateText) => {
+      // this is to update the story that one user has sent to everyone then generate an ai prompt from it then an image
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
         console.log("updating story", updateText);
-        io.in(id).emit('lobbyStoryUpdate', updateText);
+        io.in(id).emit('updateStoryForAll', updateText);
+        const response = getResponseFromPrompt(updateText);
+        io.in(id).emit('updateStoryForAll', response);
       } else {
         console.log("lobby not found");
         socket.emit('joinError', 'Lobby not found');
@@ -103,7 +119,20 @@ app.prepare().then(() => {
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
-        io.in(id).emit('startStoryModeForAll');
+        io.in(id).emit('startStoryModeForAll', lobby.context);
+      }
+    });
+
+    socket.on('sendPrompt', (lobbyId, prompt) => {
+      let id = parseInt(lobbyId);
+      const lobby = LOBBIES.get(id);
+      if (lobby) {
+        console.log("sending prompt", prompt);
+        lobby.context.push(prompt);
+        io.in(id).emit('updateStory', prompt);
+        // call api endpoint to generate an image from the prompt
+        // lobby.context.push(GENERATED_IMAGE)
+        // io.in(id).emit('updateStory', GENERATED_IMAGE);
       }
     });
     

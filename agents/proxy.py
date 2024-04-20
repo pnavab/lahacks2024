@@ -57,12 +57,16 @@ def read_root():
 @app.post("/endpoint")
 async def make_agent_call(req: Request):
     # try:
+    #NO DRAWING YET, DRAWING CAN REGEN IMAGE
+    correct_image = True
+    while(not correct_image):
         guessingRes = await guessing_agent_query(req)
         print(f"successful call - guessing agent response: {guessingRes}")
         req1 = Request1(correct=req.correct,guessed=guessingRes.get('guessed'))
         validatorRes = await validator_agent_query(req1)
         print(f"successful call - validation agent response: {validatorRes}")
         return validatorRes.get('text')
+    #RETURN IMAGE CODE
     # except Exception as e:
     #     print("ERRR "+str(e))
     #     return "unsuccessful agent call"
