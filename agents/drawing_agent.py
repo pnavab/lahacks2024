@@ -1,13 +1,16 @@
 from uagents import Agent, Context, Model
 import base64
-
+GUESSING_AGENT_ADDRESS = "agent1qw23p2euxrt0ysppyfaxn46gusswu3tm2jrtgc5xq4kh328u2r7ej555mcc"
 class Request(Model):
-    base64encodedimage: str
+    correct: str
 
 
 class Response(Model):
     text: str
 
+class GuesserRequest(Model):
+    correct: str
+    guessed: str
 
 drawing_agent = Agent(
     name="drawing_agent",
@@ -22,15 +25,18 @@ async def startup(ctx: Context):
     ctx.logger.info(f"With address: {drawing_agent.address}")
 
 
-@drawing_agent.on_query(model=Request, replies={Response})
+@drawing_agent.on_query(model=Request, replies={Response, GuesserRequest})
 async def query_handler(ctx: Context, sender: str, _query: Request):
     ctx.logger.info("Query received")
     try:
-        # do something here
+        # base64 encode shit here
+
         
         
-        await ctx.send(sender, Response(text=_query.base64encodedimage))
+        res = await ctx.send(GUESSING_AGENT_ADDRESS, Request())
+        await ctx.send(sender, Request(text=res))
     except Exception:
+        
         await ctx.send(sender, Response(text="fail"))
 
 
