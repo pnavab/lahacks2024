@@ -15,9 +15,11 @@ export default function Home() {
 
     const router = useRouter();
     const params = useParams();
-    
+
     const [avatarText, setAvatarText] = useState('')
-    
+
+    const [isLobbyTime, setIsLobbyTime] = useState(false)
+
     const [isStoryTime, setIsStoryTime] = useState(false)
 
     const [storyText, setStoryText] = useState('')
@@ -30,7 +32,10 @@ export default function Home() {
 
         // Generate Image here Et here
 
-        if(avatarText !== '') setIsStoryTime(true)
+        if (avatarText !== '') {
+            setIsLobbyTime(false)
+            setIsStoryTime(true)
+        }
 
         console.log("in assignAvatar button")
         console.log('button clicked', avatarText)
@@ -38,7 +43,7 @@ export default function Home() {
         socket.emit("updateAvatar", username, params.id, avatarText)
     }
 
-    function genImageWithText(){
+    function genImageWithText() {
 
         // Gen Story Image here Et here
 
@@ -49,6 +54,7 @@ export default function Home() {
     }
 
     function joinLobby() {
+        setIsLobbyTime(true)
         // todo: check if username is already taken
         socket.emit("joinLobby", username, params.id, null);
         socket.on('lobbyJoined', (data) => {
@@ -69,7 +75,7 @@ export default function Home() {
             })
         }
 
-        
+
 
         async function generateQrCode() {
             const response = await fetch("http://localhost:3000/api/qr", {
@@ -92,7 +98,7 @@ export default function Home() {
         const handleAvatarUpdate = (username, avatarUrl) => {
             // console.log("received update setting users here", [username, avatarUrl]);
             console.log('avatar', avatarUrl)
-            
+
             const imageElement = document.getElementById(`avatar-${username}`);
             console.log('imageElement', imageElement)
             if (imageElement) {
@@ -102,7 +108,7 @@ export default function Home() {
 
         const handleStoryUpdate = (data) => {
             console.log("received update story image here", data);
-            console.log('ASDASDASD',story)
+            console.log('ASDASDASD', story)
             setStory(story + data)
         }
 
@@ -120,6 +126,8 @@ export default function Home() {
         // Clean up the event listener when the component unmounts
         return () => {
             socket.off("lobbyUpdate", handleLobbyUpdate);
+            socket.off("lobbyAvatarUpdate", handleAvatarUpdate);
+            socket.off("lobbyStoryUpdate", handleStoryUpdate);
         };
     }, []);
 
@@ -177,7 +185,7 @@ export default function Home() {
             {lobbyExists
                 ? <div className="flex flex-col items-center pt-20">
 
-                    
+
                     {!joinedLobby && (
                         <div className="row mt-3 mb-80">
                             <input placeholder='username' onChange={(e) => setUsername(e.target.value)}></input>
@@ -185,46 +193,52 @@ export default function Home() {
                         </div>
                     )}
 
-                    
                     <div>
-                        {/* where client's avatar will go */}
-                    </div>
-                    <div>
-                        {isStoryTime ? 
+                        {isLobbyTime ?
                             <>
-                                <input placeholder="Type To Add On Story!" value={storyText} onChange={e => setStoryText(e.target.value)}/>
-                                <button onClick={genImageWithText}> Go </button>
-                                <input disabled value={story}/>
-                            </>
-                            : 
-                            <>
-                                <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)}/>
+                                <input placeholder="Type For Avatar!" value={avatarText} onChange={e => setAvatarText(e.target.value)} />
                                 <button onClick={assignAvatar}> Go </button>
-                            </>
-                        } 
-                    </div>
-
-                    <p> </p> 
-
-                    <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
-                        <div className="text-black flex flex-row items-center ml-auto mr-auto">
-
-                            {connectedUsers.map((user, index) => (
-                                <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
-                                    <p>User: {user}</p>
-                                    <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
+                                <input disabled value={story} />
+                                <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
+                                    <div className="text-black grid grid-cols-1 items-center ml-auto mr-auto">
+                                        {connectedUsers.map((user, index) => (
+                                            <div key={index} className="rounded-md items-center">
+                                                <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                                {qrCode && (
+                                    <div>
+                                        <img src={qrCode} alt='qr code' height={200} width={200} />
+                                    </div>
+                                )}
+                            </>
+                            :
+                            <>
+                                {
+                                    isStoryTime ?
+                                    <>
+                                        <div className="flex flex-col items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
+                                        <input placeholder="Type To Add On Story!" value={storyText} onChange={e => setStoryText(e.target.value)} />
+                                        <button onClick={genImageWithText}> Go </button>
+                                        <input value={story}/> 
+                                        <div className="text-black items-center ml-auto mr-auto">
+                                            {connectedUsers.map((user, index) => (
+                                                <div key={index} className="m-3 rounded-md items-center bg-gray-50">
+                                                    <img className='bg-white' id={`avatar-${user}`} alt={`${user}'s avatar`} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    </>
+                                }
+                            </>
+                        }
                     </div>
-
-                    {avatarText}
-
-                    {qrCode && (
-                        <div>
-                            <img src={qrCode} alt='qr code' height={200} width={200} />
-                        </div>
-                    )}
                 </div>
                 : <div>
                     <p>that lobby id does not exist</p>
