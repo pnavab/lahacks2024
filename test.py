@@ -1,16 +1,13 @@
-import base64
-from PIL import Image
+import requests
+import os
+import together
+together.api_key="713ab4d86fc2505d5632f1cf7039fe3740bd25c15d56722a4e94f5067eb81c11"
+def get_ai_image(correct):
+    response = together.Image.create(
+        prompt=f"{correct} drawn in crude pictionary style by a child in black on a white",
+        model="stabilityai/stable-diffusion-2-1", width=500, height=500)
+    image = response["output"]["choices"][0]
+    output = image["image_base64"]
+    return output
 
-def encode_image_to_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        image_data = img_file.read()
-        encoded_image = base64.b64encode(image_data)
-        return encoded_image.decode('utf-8')
-
-
-png_file_path = "testpng.png"
-
-
-base64_encoded_image = encode_image_to_base64(png_file_path)
-
-print("Base64 Encoded Image:\n", base64_encoded_image)
+print(get_ai_image("eggs"))

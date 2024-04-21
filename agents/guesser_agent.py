@@ -5,7 +5,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 
-class Request(Model):
+class Request1(Model):
     guessed: str
     correct: str
 
@@ -29,8 +29,8 @@ async def startup(ctx: Context):
     ctx.logger.info(f"With address: {guesser_agent.address}")
 
 
-@guesser_agent.on_query(model=Request, replies={Response})
-async def query_handler(ctx: Context, sender: str, _query: Request):
+@guesser_agent.on_query(model=Request1, replies={Response})
+async def query_handler(ctx: Context, sender: str, _query: Request1):
     ctx.logger.info("Query received")
     try:
         genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')

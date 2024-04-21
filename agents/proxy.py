@@ -23,7 +23,8 @@ DRAWING_AGENT_ADDRESS = "agent1qwqhyvxj9tpzflh9g47fk9w2wjfr5m5ctdsddt6npxwsk5vee
 GAME_MASTER_ADDRESS = "agent1q0l63cezc6udwjk9yzjyd7cwf9g9u36xuglm4ut7p457l7qvfvypjg7ty4w"
 GUESSING_AGENT_ADDRESS = "agent1qw23p2euxrt0ysppyfaxn46gusswu3tm2jrtgc5xq4kh328u2r7ej555mcc"
 VALIDATOR_AGENT_ADDRESS = "agent1q2zfsfptf2j936hjnlcutpmzqm705ka7frkmwr6uxlg4wdlgvvy97l03ynx"
-
+class Request0(Model):
+    correct: str
 class Request(Model):
     guessed: str
     correct: str
@@ -34,7 +35,11 @@ class Request1(Model):
 
 class TestRequest(Model):
     message: str
-
+async def drawing_agent_query(req):
+    response = await query(destination=DRAWING_AGENT_ADDRESS, message=req, timeout=15.0)
+    print(response)
+    data = json.loads(response.decode_payload())
+    return data
 async def guessing_agent_query(req):
     response = await query(destination=GUESSING_AGENT_ADDRESS, message=req, timeout=15.0)
     print(response)
@@ -59,17 +64,22 @@ def read_root():
 
 
 @app.post("/endpoint")
-async def make_agent_call(req: Request):
-    # try:
-    #NO DRAWING YET, DRAWING CAN REGEN IMAGE
-    correct_image = True
+async def make_agent_call(req: Request0):
+    correct_image = False
+    base64encodedimage = ""
     while(not correct_image):
-        guessingRes = await guessing_agent_query(req)
+        drawingRes = await drawing_agent_query(req)
+        print(f"successful call - draw agent response: {drawingRes} {req.correct} {drawingRes.get('correct')}")
+        base64encodedimage = drawingRes.get('correct')
+        guessingRes = await guessing_agent_query(Request1(correct=req.correct, guessed=drawingRes.get('correct')))
         print(f"successful call - guessing agent response: {guessingRes}")
         req1 = Request1(correct=req.correct,guessed=guessingRes.get('guessed'))
         validatorRes = await validator_agent_query(req1)
         print(f"successful call - validation agent response: {validatorRes}")
-        return validatorRes.get('text')
+        if (validatorRes.get('text') == 'true'):
+                correct_image = True
+    return base64encodedimage
+
     #RETURN IMAGE CODE
     # except Exception as e:
     #     print("ERRR "+str(e))
