@@ -37,13 +37,25 @@ export default function Home() {
         socket.emit("updateAvatar", username, params.id, avatarText)
     }
 
-    function sendPromptToGenerateImage() {
+    async function sendPromptToGenerateImage() {
 
         // Gen Story Image here Et here
 
         console.log('sendPromptToGenerateImage button clicked', storyPrompt)
+        socket.emit("updateStory", username, params.id, storyPrompt);
+        const contextToSend = storyContext.filter((element) => typeof element === 'string');
+        console.log("context to send", contextToSend);
+        const response = await fetch('/api/generate_storypoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+          body: JSON.stringify({context: contextToSend}),
+        });
+        const data = await response.json();
+        console.log("received from the prompt ai", data.response);
+        socket.emit("updateStory", username, params.id, data.response);
 
-        socket.emit("updateStory", username, params.id, storyPrompt)
     }
 
     function joinLobby() {
@@ -108,22 +120,22 @@ export default function Home() {
         }
         
         const handleStartStoryModeForAll = (data) => {
-            console.log("received update story image here", data);
+            console.log("received start story image here", data);
             setIsLobbyTime(false);
             setIsStoryTime(true);
-            setStoryContext(data);
+            setStoryContext(data.reverse());
         }
 
-        const handleUpdateStoryForAll = (data) => {
-            console.log("received update story image here", data);
-            setStoryContext(storyContext => [data, ...storyContext]);
+        const handleUpdateStoryForAll = (lastText, context) => {
+            console.log("received update story image here", lastText, context);
+            // setStoryContext(storyContext => [data, ...storyContext]);
+            setStoryContext(context.reverse());
             console.log("story context is now", storyContext);
         }
 
         checkIfLobbyIdValid();
         generateQrCode();
         assignAvatar();
-        sendPromptToGenerateImage();
 
         socket.on("lobbyUpdate", handleLobbyUpdate);
         socket.on("lobbyAvatarUpdate", handleAvatarUpdate);

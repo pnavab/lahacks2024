@@ -2,6 +2,7 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
+import { type } from "node:os";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -22,7 +23,7 @@ function getImageFromPrompt(prompt) {
   return "this is an ai generated response"
 }
 
-function getResponseFromPrompt(prompt) {
+function getResponseFromContext(context) {
   // call the api endpoint to generate a response from the prompt
   // return the generated response
   return "this is an ai generated response"
@@ -43,9 +44,10 @@ app.prepare().then(() => {
 
     socket.on('createLobby', () => {
       const id = generateLobbyId(); // Generate a unique lobby ID
-      const lobby = { id: id, clients: [], context: ["testing hello 1 2 3", 1, "second testing 1 2 3", 1, "third testing 1 2 3 long long ltesting ", 1, "lots of testing"] };
+      const lobby = { id: id, clients: [], context: ["A boy spawns in a forest"] };
       LOBBIES.set(id, lobby);
       socket.join(id);
+      console.log(lobby.context, "at creation");
       socket.emit('lobbyCreated', id);
     });
       
@@ -87,16 +89,16 @@ app.prepare().then(() => {
         socket.emit('joinError', 'Lobby not found');
       }
     });
-
-    socket.on('updateStory', (username, lobbyId, updateText) => {
+    
+    socket.on('updateStory', async (username, lobbyId, updateText) => {
       // this is to update the story that one user has sent to everyone then generate an ai prompt from it then an image
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
         console.log("updating story", updateText);
-        io.in(id).emit('updateStoryForAll', updateText);
-        const response = getResponseFromPrompt(updateText);
-        io.in(id).emit('updateStoryForAll', response);
+        lobby.context.push(updateText);
+        const contextToSend = lobby.context.filter((point) => {typeof(point) === 'string'});
+        io.in(id).emit('updateStoryForAll', updateText, lobby.context);        
       } else {
         console.log("lobby not found");
         socket.emit('joinError', 'Lobby not found');
@@ -119,11 +121,12 @@ app.prepare().then(() => {
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
+        console.log("starting story mode", lobby.context);
         io.in(id).emit('startStoryModeForAll', lobby.context);
       }
     });
 
-    socket.on('sendPrompt', (lobbyId, prompt) => {
+    socket.on('sendPrompt', async (lobbyId, prompt) => {
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {

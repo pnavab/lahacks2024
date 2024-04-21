@@ -1,9 +1,13 @@
 import json
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from uagents import Model
 from uagents.query import query
+import requests
+import os
+import together
+together.api_key="713ab4d86fc2505d5632f1cf7039fe3740bd25c15d56722a4e94f5067eb81c11"
 
 app = FastAPI()
 origins = ["*"]
@@ -78,4 +82,22 @@ async def game_master_call(req: TestRequest):
         return {res}
     except Exception:
         return "unsuccessful agent call"
-    
+
+def get_ai_image(prompt):
+    response = together.Image.create(
+        prompt=prompt,
+        model="stabilityai/stable-diffusion-xl-base-1.0", width=500, height=500)
+    image = response["output"]["choices"][0]
+    output = image["image_base64"]
+    return output
+
+@app.post("/get_image")
+async def get_image(req: Request):
+    req_json = await req.json()
+    print(req_json)
+    prompt = req_json["prompt"]
+    print(prompt)
+    response = await get_ai_image(prompt)
+    print(response)
+    return response
+
