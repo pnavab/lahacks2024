@@ -13,6 +13,8 @@
 /.next/
 /out/
 
+/notebook/full_raw_book.ndjson
+
 # production
 /build
 
