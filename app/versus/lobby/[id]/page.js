@@ -22,7 +22,7 @@ export default function Paint() {
     const [gameState, setGameState] = useState("waiting to start"); // waiting, drawing, guessing
     const [customWords, setCustomWords] = useState([]);
     const [useOnlyCustomWords, setUseOnlyCustomWords] = useState(false);
-    const [timerTime, setTimerTime] = useState(8);
+    const [timerTime, setTimerTime] = useState(15);
     const [prompt, setPrompt] = useState();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     let [bot, setBots] = useState(false);
@@ -48,6 +48,34 @@ export default function Paint() {
             imageElement.src = data;
         }
         console.log("image element is", imageElement, "image element");
+    }
+    
+    function renderBotImage(data) {
+        const imageElement = document.getElementById(`drawing--1`);
+        if (imageElement) {
+            imageElement.src = data;
+        }
+        console.log("bot image element is", imageElement, "image element");
+    }
+
+    async function updateBotFunction(prompt) {
+        
+        let response = await fetch('http://localhost:8000/endpoint', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // body: '{"correct": "banana"}',
+            body: JSON.stringify({
+                'correct': prompt
+            }),
+            method: 'POST',
+        });
+        const data = await response.json();
+        console.log("241234123412341234", data);
+        const picture = 'data:image/png;base64,' + data;
+        renderBotImage(picture);
+
+
     }
 
     function choosePrompt() {
@@ -183,7 +211,8 @@ export default function Paint() {
         const startVersusRoundForAll = (data) => {
             console.log("starting round for all...");
             clearCanvas();
-            choosePrompt();
+            const p = choosePrompt();
+            updateBotFunction(p);
             setTimer(true);
             setRemainingTime(timerTime);
             setGameState("drawing");
@@ -302,7 +331,7 @@ export default function Paint() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            Ai Dungeon
+                            skribbl.ai
                         </Link>
                     </div>
                     <div className="dropdown">
@@ -447,7 +476,14 @@ export default function Paint() {
                                 <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} />
                             </div>
                         ))}
-                        
+                        {bot ? 
+                            <div key={-1} className={`text-black bg-gray-100 w-full`}>
+                                <h1 className='pl-3'>BOT</h1>
+                                <img className='bg-white w-full h-[200px]' id={`drawing--1`} />
+                            </div>
+                        :
+                        null
+                        }
                     </div>
 
                     <div>
