@@ -98,7 +98,7 @@ export default function Home() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            skribbl.ai
+                            SketchBox
                         </Link>
                     </div>
                     <div className="dropdown">

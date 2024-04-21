@@ -22,7 +22,7 @@ export default function Paint() {
     const [gameState, setGameState] = useState("waiting to start"); // waiting, drawing, guessing
     const [customWords, setCustomWords] = useState([]);
     const [useOnlyCustomWords, setUseOnlyCustomWords] = useState(false);
-    const [timerTime, setTimerTime] = useState(15);
+    const [timerTime, setTimerTime] = useState(5);
     const [prompt, setPrompt] = useState();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     let [bot, setBots] = useState(false);
@@ -331,7 +331,7 @@ export default function Paint() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            skribbl.ai
+                            SketchBox
                         </Link>
                     </div>
                     <div className="dropdown">

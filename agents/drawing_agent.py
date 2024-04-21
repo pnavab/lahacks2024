@@ -47,7 +47,7 @@ async def query_handler(ctx: Context, sender: str, _query: Request0):
         "Authorization": "Bearer VZlLjrlTqebChSNFepvks5aJzIxfu5RF1wTNppYHGtphRdkp",
         "Accept": "application/json"
     }
-    prompt = f"Draw a/n {_query.correct} in black and white like a 3 year old would. Make sure to use few lines and no extra detail besides the {_query.correct} itself."
+    prompt = f"Draw a/n {_query.correct} extremely crudely and sloppily in black and white. Use few lines and make it look handdrawn."
     payload = {"prompt": prompt}
 
     response = requests.post(url, headers=headers, json=payload)
