@@ -145,7 +145,7 @@ export default function Home() {
                         className='border-2 border-white placeholder-[#585857] font-bold text-black mt-5 w-[12%] h-11 rounded-full text-xl hover:w-1/2 duration-150 ease-in-out py-4 bg-[#99ddf1] hover:rounded-3xl hover:h-16 hover:bg-gradient-to-t hover:from-[#88c9dd] hover:to-[#acdae7] text-center px-3' />
                   </div>
                   {/* Response */}
-                  <textarea rows={4} disabled placeholder={`${recommendationResponse}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
+                  <textarea rows={4} disabled placeholder={`${recommendationResponse}`} className="border-2 border-white text-white font-bold text-2xl text-left w-1/2 py-10 px-4 mt-20 rounded-lg before:absolute before:inset-0 before:animate-typewriter before:bg-stone-800 after:absolute after:inset-0 after:w-[0.125em] after:animate-caret" />
               </div>
             {/* </div> */}
         </main>
