@@ -72,7 +72,7 @@ export default function Home() {
       </div>
       <div className="bg-stone-800 pl-4 h-screen grid grid-cols-1 mx-10">
         <div className='pt-16'>
-          <h1 className="font-bold text-[7rem] text-indigo-700">SketchBox</h1>
+          <h1 className="font-[500] text-[7rem] text-indigo-700">SketchBox</h1>
           <h1 class="relative w-[max-content] font-mono before:absolute before:inset-0 before:animate-typewriter before:bg-stone-800  after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black text-7xl py-2"><p className=' text-slate-500'> AI</p>Powered Gaming</h1>
         </div>
         <div className=" animate-fadeIn delay-500">
