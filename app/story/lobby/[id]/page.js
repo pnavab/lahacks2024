@@ -77,6 +77,8 @@ export default function Home() {
         socket.on('lobbyJoined', (data) => {
             console.log("joined lobby")
             setJoinedLobby(true);
+            setIsStoryTime(true);
+            setIsLobbyTime(false);
         });
     }
 
