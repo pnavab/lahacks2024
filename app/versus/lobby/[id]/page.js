@@ -22,7 +22,7 @@ export default function Paint() {
     const [gameState, setGameState] = useState("waiting to start"); // waiting, drawing, guessing
     const [customWords, setCustomWords] = useState([]);
     const [useOnlyCustomWords, setUseOnlyCustomWords] = useState(false);
-    const [timerTime, setTimerTime] = useState(5);
+    const [timerTime, setTimerTime] = useState(20);
     const [prompt, setPrompt] = useState();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     let [bot, setBots] = useState(false);
@@ -31,6 +31,7 @@ export default function Paint() {
     const params = useParams();
 
     function joinSoloCanvas() {
+        setJoinedLobby(true);
         socket.emit("joinSoloCanvas", username, params.id);
         socket.on("joinedSoloCanvas", (data) => {
 
@@ -364,88 +365,71 @@ export default function Paint() {
             {lobbyExists
                 ?
                 <div id='lobby-exists' className='text-left flex justify-start gap-8 mx-8 pt-20'>
-
-                    <div className="text-black pt-20 items-center w-48"> {/* Left Column */}
-
-                        <button className='bg-gray-300 rounded-md px-5 py-2 duration-200 hover:bg-gray-400 w-fill' onClick={startRound}>Start Round</button>
-                        <div className='mt-20 border-sm border-black bg-gray-100 rounded-md'>
+                    <div className="text-black pt-20 items-center w-48 pl-3"> {/* Left Column */}
+                        <button className='bg-[#4f80e2] text-white rounded-md px-4 py-2 duration-200 hover:bg-[#3e54d3] border-2' onClick={startRound}>Start Round</button>
+                        <div className='mt-20 border-sm border-white border-1 bg-indigo-300 rounded-md'>
                             {prompt && (
-                                <div className="border-b border-black">
+                                <div className="border-white border-1">
                                     <p className='text-xl p-2'>Draw a {prompt}</p>
                                 </div>
                             )}
-                            {guess && (
-                                <div className="border-b border-black">
-                                    <p className={`text-xl p-2 animate-pulse ${prompt && guess.toLowerCase().includes(prompt.toLowerCase()) ? 'text-green-500' : ""}`}>{guess}</p>
+                            {guess && ( 
+                                <div className="border-1 border-white">
+                                    <p className={`text-xl p-2 animate-pulse ${prompt && guess.toLowerCase().includes(prompt.toLowerCase()) ? 'text-green-800' : ""}`}>{guess}</p>
                                 </div>
                             )}
                             {remainingTime && (
-                                <div>
-                                    <p className='text-xl p-2'>{remainingTime} seconds remaining</p>
+                                <div className="border-white border-1">
+                                    <p className="text-xl">{remainingTime} seconds remaining</p>
                                 </div>
                             )}
                         </div>
                     </div>
                     <div>
                         <div className="row mt-3 pl-10">
-                            <div className='grid grid-cols-2 w-full justify-between'>
-                                {!joinedLobby &&
-                                    <div className='pb-4'>
-                                        <input placeholder='username' className='px-5 py-2 border-none bg-white text-black rounded-l-md' onChange={(e) => setUsername(e.target.value)}></input>
-                                        <button className='bg-gray-300 rounded-r-md px-5 py-2 duration-200 hover:bg-gray-400' onClick={joinSoloCanvas}>Join Lobby</button>
-                                    </div>
-                                }
-                                <div>
-                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={copyUrlToClipboard} onMouseEnter={(event) => { event.target.innerText = window.location.href }} onMouseLeave={(event) => { event.target.innerText = 'Copy Invite Link' }}>Copy Invite Link</button>
-                                </div>
-                                <div>
-                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={handleBots} >Toggle Bot {bot ? "False" : "True"}</button>
-                                </div>
-                            </div>
                             <div className='canvas w-full '>
                                 <canvas ref={canvasRef} width={800} height={600} className='bg-white rounded-sm border-black hover:cursor-crosshair'></canvas>
-                                <div className='flex flex-row items-center gap-32 mt-4'>
+                                <div className='flex flex-row items-center gap-4 mt-4'>
                                     <div className="colors relative" data-tooltip="Left-/Rightclick to choose a color!" data-tooltipdir="S">
-                                        <div className="top flex ">
-                                            <div className=" rounded-tl-sm color bg-white  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#FFFFFF")}></div>
-                                            <div className="color bg-gray-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#9ca3af")}></div>
-                                            <div className="color bg-red-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ef4444")}></div>
-                                            <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
-                                            <div className="color bg-yellow-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#facc15")}></div>
-                                            <div className="color bg-green-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#22c55e")}></div>
-                                            <div className="color bg-green-300  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#86efac")}></div>
-                                            <div className="color bg-blue-400  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#5DE2E7")}></div>
-                                            <div className="color bg-blue-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#1d4ed8")}></div>
-                                            <div className="color bg-purple-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#a855f7")}></div>
-                                            <div className="color bg-pink-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ec4899")}></div>
-                                            <div className="color bg-pink-200  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#fbcfe8")}></div>
-                                            <div className="rounded-tr-sm color bg-[#bfa094]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#bfa094")}></div>
-                                        </div>
-                                        <div className="bottom flex rounded-b-2">
-                                            <div className=" rounded-bl-sm color bg-black  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#000000")}></div>
-                                            <div className="color bg-gray-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#4b5563")}></div>
-                                            <div className="color bg-red-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#991b1b")}></div>
-                                            <div className="color bg-orange-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ea580c")}></div>
-                                            <div className="color bg-yellow-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ca8a04")}></div>
-                                            <div className="color bg-green-800  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#166534")}></div>
-                                            <div className="color bg-green-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#16a34a")}></div>
-                                            <div className="color bg-blue-600  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#2563eb")}></div>
-                                            <div className="color bg-indigo-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#312e81")}></div>
-                                            <div className="color bg-purple-900  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#581c87")}></div>
-                                            <div className="color bg-purple-700  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#7e22ce")}></div>
-                                            <div className="color bg-orange-500  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
-                                            <div className=" rounded-br-sm color bg-[#977669]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#977669")}></div>
-                                            {/* <div className="color bg-[#43302b]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125" onClick={(e) => setColor("#43302b") }></div> */}
-                                        </div>
+                                            <div className="top flex ">
+                                                <div className=" rounded-tl-sm color bg-white  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#FFFFFF")}></div>
+                                                <div className="color bg-gray-400  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#9ca3af")}></div>
+                                                <div className="color bg-red-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ef4444")}></div>
+                                                <div className="color bg-orange-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
+                                                <div className="color bg-yellow-400  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#facc15")}></div>
+                                                <div className="color bg-green-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#22c55e")}></div>
+                                                <div className="color bg-green-300  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#86efac")}></div>
+                                                <div className="color bg-blue-400  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#5DE2E7")}></div>
+                                                <div className="color bg-blue-700  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#1d4ed8")}></div>
+                                                <div className="color bg-purple-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#a855f7")}></div>
+                                                <div className="color bg-pink-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ec4899")}></div>
+                                                <div className="color bg-pink-200  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#fbcfe8")}></div>
+                                                <div className="rounded-tr-sm color bg-[#bfa094]  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#bfa094")}></div>
+                                            </div>
+                                            <div className="bottom flex rounded-b-2">
+                                                <div className=" rounded-bl-sm color bg-black  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#000000")}></div>
+                                                <div className="color bg-gray-600  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#4b5563")}></div>
+                                                <div className="color bg-red-800  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#991b1b")}></div>
+                                                <div className="color bg-orange-600  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ea580c")}></div>
+                                                <div className="color bg-yellow-600  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#ca8a04")}></div>
+                                                <div className="color bg-green-800  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#166534")}></div>
+                                                <div className="color bg-green-600  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#16a34a")}></div>
+                                                <div className="color bg-blue-600  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#2563eb")}></div>
+                                                <div className="color bg-indigo-900  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#312e81")}></div>
+                                                <div className="color bg-purple-900  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#581c87")}></div>
+                                                <div className="color bg-purple-700  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#7e22ce")}></div>
+                                                <div className="color bg-orange-500  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#f97316")}></div>
+                                                <div className=" rounded-br-sm color bg-[#977669]  duration-200 hover:cursor-grab h-8 w-8 hover:scale-125 hover:rounded-md" onClick={(e) => setColor("#977669")}></div>
+                                                {/* <div className="color bg-[#43302b]  duration-200 hover:cursor-grab h-6 w-6 hover:scale-125" onClick={(e) => setColor("#43302b") }></div> */}
+                                            </div>
                                     </div>
                                     <div className="flex flex-row gap-3  p-2 items-center ">
-                                        <div className={`color duration-200 cursor-grab h-2 w-2 rounded-full hover:scale-125 ${penSize === 4 ? 'bg-black' : 'bg-gray-500'}`} onClick={(e) => setPenSize(4)}></div>
-                                        <div className={`color duration-200 cursor-grab h-4 w-4 rounded-full hover:scale-125 ${penSize === 8 ? 'bg-black' : 'bg-gray-500'}`} onClick={(e) => setPenSize(8)}></div>
-                                        <div className={`color duration-200 cursor-grab h-6 w-6 rounded-full hover:scale-125 ${penSize === 10 ? 'bg-black' : 'bg-gray-500'}`} onClick={(e) => setPenSize(10)}></div>
-                                        <div className={`color duration-200 cursor-grab h-8 w-8 rounded-full hover:scale-125 ${penSize === 15 ? 'bg-black' : 'bg-gray-500'}`} onClick={(e) => setPenSize(15)}></div>
+                                        <div className={`color duration-200 cursor-grab h-2 w-2 rounded-full hover:scale-125 ${penSize === 4 ? 'bg-black' : 'bg-[#4f80e2] hover:bg-[#3e54d3]'}`} onClick={(e) => setPenSize(4)}></div>
+                                        <div className={`color duration-200 cursor-grab h-4 w-4 rounded-full hover:scale-125 ${penSize === 8 ? 'bg-black' : 'bg-[#4f80e2] hover:bg-[#3e54d3]'}`} onClick={(e) => setPenSize(8)}></div>
+                                        <div className={`color duration-200 cursor-grab h-6 w-6 rounded-full hover:scale-125 ${penSize === 10 ? 'bg-black' : 'bg-[#4f80e2] hover:bg-[#3e54d3]'}`} onClick={(e) => setPenSize(10)}></div>
+                                        <div className={`color duration-200 cursor-grab h-8 w-8 rounded-full hover:scale-125 ${penSize === 15 ? 'bg-black' : 'bg-[#4f80e2] hover:bg-[#3e54d3]'}`} onClick={(e) => setPenSize(15)}></div>
                                     </div>
-                                    <button onClick={clearCanvas} className='bg-gray-300 px-5 py-2 rounded-sm duration-200 hover:cursor-grab hover:bg-gray-400 '>Clear</button>
-
+                                    <button onClick={clearCanvas} className='bg-[#4f80e2] px-5 py-2 rounded-md duration-200 hover:cursor-grab hover:bg-[#3e54d3] text-white border-2 '>Clear</button>
                                 </div>
 
                             </div>
@@ -453,17 +437,20 @@ export default function Paint() {
                         </div>
                     </div>
                     <div className='mt-[100px] ml-[100px] min-w-64 flex flex-col items-center mb-auto rounded-md'>
-                        <div className="w-full">
-                            {connectedUsers.length > 0 ?
-                                <h1 className={`text-center w-full px-4 py-2 bg-gray-300 ${connectedUsers.length > 1 ? "rounded-t-md" : "rounded-md"}`}>Connected:</h1>
-                                :
-                                <h1 className="text-center w-full px-4 py-2 bg-gray-200 rounded-md"> No One Joined Yet! </h1>
+                            {!joinedLobby ?
+                                <div className='pb-4 flex flex-row'>
+                                    <input placeholder='username' className='px-5 py-2 border-none bg-white text-black rounded-l-md w-40' onChange={(e) => setUsername(e.target.value)}></input>
+                                    <button className='bg-[#4f80e2] hover:bg-[#3e54d3] text-white border-2 rounded-r-md px-5 py-2 duration-200' onClick={joinSoloCanvas}>Join Lobby</button>
+                                </div> : <></>
                             }
+                            <button className='bg-[#4f80e2] hover:bg-[#3e54d3] text-white border-2 px-2 rounded-mdpx-5 py-2 duration-200 mb-4' onClick={copyUrlToClipboard} onMouseEnter={(event) => { event.target.innerText = window.location.href }} onMouseLeave={(event) => { event.target.innerText = 'Copy Invite Link' }}>Copy Invite Link</button>
+
+                        <div className="w-full">
                         </div>
                         {connectedUsers.filter(user => user != username).map((user, index) => (
                             <div key={index} className={`text-black bg-gray-100 w-full`}>
-                                <h1 className='pl-3'>{user}</h1>
-                                <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} />
+                                <h1 className='pl-3 rounded-t-md'>{user}</h1>
+                                <img className='bg-white w-full h-[200px] mb-2 rounded-b-md' id={`drawing-${user}`} />
                             </div>
                         ))}
                         {bot ? 
@@ -474,6 +461,9 @@ export default function Paint() {
                         :
                         null
                         }
+                        <div>
+                            <button className='bg-[#4f80e2] hover:bg-[#3e54d3] text-white border-2 rounded-md px-5 py-2 duration-200 mt-4' onClick={handleBots} >Toggle Bot {bot ? "False" : "True"}</button>
+                        </div>
                     </div>
 
                     <div>
