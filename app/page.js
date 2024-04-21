@@ -69,14 +69,6 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        <div className="navbar-end">
-          <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 20 20" fill="black">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 15.848L15.53 10.848C16.1567 10.4563 16.1567 9.54368 15.53 9.15201L7.53 4.15201C6.86395 3.73573 6 4.21458 6 5.00001L6 15C6 15.7854 6.86395 16.2643 7.53 15.848ZM8 13.1958L8 6.80426L13.1132 10L8 13.1958Z" fill="#000000" />
-            </svg>
-            <p className=""> Play </p>
-          </button>
-        </div>
       </div>
       <div className="bg-stone-800 pl-4 h-screen grid grid-cols-1 ">
         <div className='pt-44'>
@@ -92,11 +84,11 @@ export default function Home() {
         </div>
         <div className="pt-24  text-left duration-700">
           <div className=" w-full pr-4 flex justify-between gap-4" >
-            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black ">
+            <div className="card w-96    text-black ">
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
+                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200  hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createStoryLobby}
                   >
                     Storytelling mode
@@ -107,11 +99,11 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black " >
+            <div className="card w-96    text-black " >
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-transparent animate-fadeIn delay-200  hover:bg-stone-700 duration-300 rounded-2xl "
+                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200  hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createCollaborativeCanvasLobby}
                   >
                     Collaborative AI Drawing
@@ -122,11 +114,11 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="card w-96   bg-gradient-to-r from-indigo-300 to-indigo-100 text-black ">
+            <div className="card w-96    text-black ">
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-transparent animate-fadeIn delay-200 hover:bg-stone-700 duration-300 rounded-2xl "
+                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createVersusLobby}
                   >
                     Versus AI Drawing 

@@ -311,7 +311,10 @@ export default function Paint() {
                             )}
                             {remainingTime && (
                                 <div>
-                                    <p className='text-xl p-2'>{remainingTime} seconds remaining</p>
+                                {remainingTime < 5 ? 
+                                    <span><p className="text-xl text-red-500">{remainingTime}</p> seconds remaining</span> 
+                                    : <p className="text-xl">{remainingTime} seconds remaining</p>
+                                }
                                 </div>
                             )}
                         </div>
