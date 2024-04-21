@@ -71,9 +71,8 @@ export default function Paint() {
             method: 'POST',
         });
         const data = await response.json();
-        console.log(typeof(data))
-        console.log(data + "12023198123hufdsiusdf g uygeyu");
-        const picture = 'data:image/png;base64,' + data[0];
+        console.log("241234123412341234", data);
+        const picture = 'data:image/png;base64,' + data;
         renderBotImage(picture);
 
 
@@ -332,7 +331,7 @@ export default function Paint() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            Ai Dungeon
+                            skribbl.ai
                         </Link>
                     </div>
                     <div className="dropdown">
