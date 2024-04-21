@@ -49,19 +49,25 @@ export default function Home() {
         const picture = 'data:image/png;base64,' + data.image;
         socket.emit("updateStory", username, params.id, picture);
         
-        const getHexCodes = await fetch('/api/get_mood', {
-            body: JSON.stringify({ 'image': picture}),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            method: 'POST',
-        });
-        const data2 = await getHexCodes.json();
-        console.log('HEXCODES', data2);
-      
-        }
+        // const getHexCodes = await fetch('/api/get_mood', {
+        //     body: JSON.stringify({ 'image': picture}),
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //     },
+        //     method: 'POST',
+        // });
+        // const data2 = await getHexCodes.json();
+        // console.log('HEXCODES', data2);
+        // const hex1 = data2.hex1.trim();
+        // const hex2 = data2.hex2.trim();
 
-    async function sendPromptToGenerateStory() {
+        // imageDiv.classList.add(`bg-[${hex1}]-400`);
+        // imageDiv.classList.add('bg-gradient-to-tr');
+        // imageDiv.classList.add(`from-${hex1}-400`);
+        // imageDiv.classList.add(`to-${hex2}-400`);
+      }
+      
+      async function sendPromptToGenerateStory() {
 
         // Gen Story Image here Et here
 
@@ -75,7 +81,7 @@ export default function Home() {
         const response = await fetch('/api/generate_storypoint', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
             },
           body: JSON.stringify({context: contextToSend}),
         });
@@ -89,16 +95,16 @@ export default function Home() {
         // todo: check if username is already taken
         socket.emit("joinLobby", username, params.id, null);
         socket.on('lobbyJoined', (data) => {
-            console.log("joined lobby")
-            setJoinedLobby(true);
-            setIsStoryTime(true);
-            setIsLobbyTime(false);
+          console.log("joined lobby")
+          setJoinedLobby(true);
+          setIsStoryTime(true);
+          setIsLobbyTime(false);
         });
         startStoryMode();
     }
 
     function startStoryMode() {
-        socket.emit("startStoryMode", params.id);
+      socket.emit("startStoryMode", params.id);
     }
     
     
@@ -107,7 +113,7 @@ export default function Home() {
             console.log(params.id);
             socket.emit("checkLobbyExists", params.id);
             socket.on('lobbyFound', (data) => {
-                console.log(`received value ${data} after checking if lobby exists`);
+              console.log(`received value ${data} after checking if lobby exists`);
                 // CHANGE THIS TO DATA AFTER TESTING
                 setLobbyExists(true);
             })
@@ -115,8 +121,8 @@ export default function Home() {
         
         async function generateQrCode() {
             const response = await fetch("/api/qr", {
-                "body": JSON.stringify({ domain: window.location.href }),
-                "method": "POST"
+              "body": JSON.stringify({ domain: window.location.href }),
+              "method": "POST"
             });
             let data = await response.json();
             console.log("full response is", data);
@@ -129,7 +135,7 @@ export default function Home() {
         const handleLobbyUpdate = (data) => {
             console.log("received update setting users here", data);
             setConnectedUsers(data);
-        };
+          };
 
         const handleAvatarUpdate = (username, avatarUrl) => {
             // console.log("received update setting users here", [username, avatarUrl]);
@@ -139,8 +145,8 @@ export default function Home() {
             console.log('imageElement', imageElement)
             if (imageElement) {
                 imageElement.src = '/1.png';
-            }
-        };
+              }
+            };
         
         const updateStory = (data) => {
             // console.log("received update story image here", data);
@@ -208,7 +214,7 @@ export default function Home() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            StoryTellers
+                            Bards
                         </Link>
                     </div>
                     <div className="dropdown">
@@ -264,21 +270,21 @@ export default function Home() {
                                             <div id="main story strip" className="flex flex-row items-center mt-4 w-[75vw] h-[65vh] bg-stone-700 rounded-lg overflow-y-scroll">
                                                 <div className="no-scrollbar text-white flex flex-row overflow-y-scroll items-center ml-auto mr-auto">
                                                     {storyContext.map((storyPoint, index) => (
-                                                    <div key={index} className="px-4 py-8 m-3 rounded-md flex items-center justify-center bg-stone-600">
-                                                    <div className="flex flex-col items-center justify-center w-full h-full">
-                                                        {typeof storyPoint === 'string' && !storyPoint.startsWith('data') ? (
-                                                            <div className="w-[300px] h-[80%] text-white flex items-center justify-center px-4">
-                                                                {storyPoint}
-                                                            </div>
-                                                        ) : (
-                                                            <div className="w-[300px] h-[80%] flex items-center justify-center">
-                                                                <img id={`image-${index}`} className='max-w-full max-h-full bg-white' src={storyPoint} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>                                                                                            
-                                                ))}
-                                            </div>
+                                                      <div key={index} id={`image-${index}`} className={`px-4 py-8 m-3 rounded-md flex items-center justify-center ${index === 0 ? 'bg-blue-400' : 'bg-stone-600'}`}>
+                                                        <div className="flex flex-col items-center justify-center w-full h-full">
+                                                            {typeof storyPoint === 'string' && !storyPoint.startsWith('data') ? (
+                                                                <div className="w-[300px] h-[80%] text-white flex items-center justify-center px-4">
+                                                                    {storyPoint}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="w-[300px] h-[80%] flex items-center justify-center">
+                                                                    <img className='max-w-full max-h-full bg-white' src={storyPoint} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>                                                                                            
+                                                  ))}
+                                              </div>
                                             {/* MAP ALL CHATS AND STORIES */}
                                         </div>
                                     </div>
@@ -286,7 +292,7 @@ export default function Home() {
                                             <button className='px-6 py-4 rounded-md bg-blue-200 hover:bg-blue-300 text-black mb-4' onClick={copyUrlToClipboard}>Copy Invite Link</button>
                                             <div className=" border-stone-900 border-2 bg-stone-700 rounded-md">
                                                 {connectedUsers.length > 0 ?
-                                                    <h1 className='text-center w-full px-4 py-2'>StoryTellers:</h1>
+                                                    <h1 className='text-center w-full px-4 py-2'>Bards:</h1>
                                                     :
                                                     <h1 className='text-center w-full px-4 py-2'>No One Joined Yet!</h1>
                                                 }

@@ -20,7 +20,7 @@ async function getHexCodes(imagePath) {
   // For text-and-image input (multimodal), use the gemini-pro-vision model
   const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
-  const prompt = "Describe the mood of the following image and generate only 2 hex codes that define the emotions expressed by this image. If you see a blank image, type 'blank'. Answer in the following format: #HEX1, #HEX2";
+  const prompt = "Describe the mood of the following image and generate only 2 common rainbow colors that define the emotions expressed by this image. Do not pick black, brown, or white. Answer in the following format: COLOR1, COLOR2";
 
   const imageParts = [
     fileToGenerativePart(imagePath, "image/png")
@@ -30,17 +30,20 @@ async function getHexCodes(imagePath) {
   const response = await result.response;
   const text = response.text();
 
-  const regex = /#([A-Fa-f0-9]{6})(?:, *#([A-Fa-f0-9]{6}))?/g;
-  const matches = text.match(regex);
-  console.log("matches", matches);
-  if (matches) {
-    const hexArr = matches[0].split(',');
-    const hex1 = hexArr[0];
-    const hex2 = hexArr[1];
+  // const regex = /#([A-Fa-f0-9]{6})(?:, *#([A-Fa-f0-9]{6}))?/g;
+  // const matches = text.match(regex);
+  // console.log("matches", matches);
+  console.log(text);
+  if (text) {
+    const hexArr =text.split(',');
+    let hex1 = hexArr[0];
+    hex1 = hex1.replace(/\s+/g, "").toLowerCase();
+    let hex2 = hexArr[1];
+    hex2 = hex2.replace(/\s+/g, "").toLowerCase();
     console.log(`Hex1: ${hex1}, Hex2: ${hex2}`);
     return [hex1, hex2];
   } else {
-    return ['#0D98BA', '#BA2F0D']
+    return ['blue', '#green']
   }
 }
 
