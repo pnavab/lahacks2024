@@ -25,6 +25,7 @@ export default function Paint() {
     const [timerTime, setTimerTime] = useState(8);
     const [prompt, setPrompt] = useState();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
+    let [bot, setBots] = useState(false);
 
     const isMounted = useRef(true);
     const params = useParams();
@@ -34,6 +35,10 @@ export default function Paint() {
         socket.on("joinedSoloCanvas", (data) => {
 
         })
+    }
+    
+    function handleBots() {
+        setBots(!bot)
     }
 
     function renderImage(username, data) {
@@ -374,6 +379,9 @@ export default function Paint() {
                                 <div>
                                     <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={copyUrlToClipboard} onMouseEnter={(event) => { event.target.innerText = window.location.href }} onMouseLeave={(event) => { event.target.innerText = 'Copy Invite Link' }}>Copy Invite Link</button>
                                 </div>
+                                <div>
+                                    <button className='bg-gray-300 rounded-md hover:bg-gray-400 px-5 py-2 duration-200' onClick={handleBots} >Toggle Bot {bot ? "False" : "True"}</button>
+                                </div>
                             </div>
                             <div className='canvas w-full '>
                                 <canvas ref={canvasRef} width={800} height={600} className='bg-white rounded-sm border-black hover:cursor-crosshair'></canvas>
@@ -435,10 +443,11 @@ export default function Paint() {
                         </div>
                         {connectedUsers.filter(user => user != username).map((user, index) => (
                             <div key={index} className={`text-black bg-gray-100 w-full`}>
-                                <h1 className='pl-3'>{user}:</h1>
+                                <h1 className='pl-3'>{user}</h1>
                                 <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} />
                             </div>
                         ))}
+                        
                     </div>
 
                     <div>

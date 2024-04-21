@@ -8,6 +8,7 @@ import { useState } from "react";
 export default function Home() {
     const [recommendationResponse, setRecommendationResponse] = useState('');
     const [userInput, setUserInput] = useState('');
+    const [isFocused, setIsFocused] = useState(false);
     const router = useRouter();
 
     function createLobby() {
@@ -17,6 +18,13 @@ export default function Home() {
             router.push(`/lobby/${data}`)
         });
     }
+
+    const handleFocus = () => {
+      setIsFocused(true);
+    };
+    const handleBlur = () => {
+      setIsFocused(false);
+    };
 
     async function getRecommendation() {
         setRecommendationResponse('Thinking...');
@@ -90,7 +98,7 @@ export default function Home() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            Ai Dungeon
+                            skribbl.ai
                         </Link>
                     </div>
                     <div className="dropdown">
@@ -121,18 +129,25 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            <div className="bg-stone-800 font-mono pl-4 pt-44 text-center h-screen w-full">
-                <p className="text-7xl font-bold"> Game Master </p>
-                <div className="flex justify-center text-center pt-4 ">
-                <input placeholder={'What Game do You want to Experience ↵ '} 
-                    onKeyDown={handleEnter} 
-                    onChange={(e) => { setUserInput(e.target.value) }} 
-                    className='w-1/2 py-4 rounded-full bg-black text-right pl-6' 
-                    style={{textAlign: 'left'}} />
-                </div>
-                {/* Response */}
-                <textarea rows={4} disabled placeholder={`${recommendationResponse}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
-            </div>
+            {/* <div className="bg-gradient-to-br from-stone-800 via-purple-500 to-stone-600 h-screen w-full"> */}
+              <div className="bg-[#23374d] pl-4 pt-44 text-center h-screen w-full">
+                  <p className="text-7xl font-bold"> Game Master </p>
+                  <p className="text-xl mt-2">Enjoy the next frontier of gaming with the power of AI at your fingertips.</p>
+                  <div className="flex justify-center text-center pt-4 mt-4">
+                      <input
+                        placeholder={isFocused ? 'What game vibe do you want to experience?                               ↵ ' : 'Interact'}
+                        // onFocus={handleFocus}
+                        onMouseEnter={handleFocus}
+                        onMouseLeave={handleBlur}
+                        // onBlur={handleBlur}
+                        onKeyDown={handleEnter}
+                        onChange={(e) => { setUserInput(e.target.value) }}
+                        className='border-2 border-white placeholder-[#585857] font-bold text-black mt-5 w-[12%] h-11 rounded-full text-xl hover:w-1/2 duration-150 ease-in-out py-4 bg-[#99ddf1] hover:rounded-3xl hover:h-16 hover:bg-gradient-to-t hover:from-[#88c9dd] hover:to-[#acdae7] text-center px-3' />
+                  </div>
+                  {/* Response */}
+                  <textarea rows={4} disabled placeholder={`${recommendationResponse}`} className="text-left w-1/2 py-10 px-4 mt-20 rounded-lg" />
+              </div>
+            {/* </div> */}
         </main>
     );
 }
