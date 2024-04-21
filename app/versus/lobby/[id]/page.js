@@ -49,6 +49,35 @@ export default function Paint() {
         }
         console.log("image element is", imageElement, "image element");
     }
+    
+    function renderBotImage(data) {
+        const imageElement = document.getElementById(`drawing--1`);
+        if (imageElement) {
+            imageElement.src = data;
+        }
+        console.log("bot image element is", imageElement, "image element");
+    }
+
+    async function updateBotFunction(prompt) {
+        
+        let response = await fetch('http://localhost:8000/endpoint', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // body: '{"correct": "banana"}',
+            body: JSON.stringify({
+                'correct': prompt
+            }),
+            method: 'POST',
+        });
+        const data = await response.json();
+        console.log(typeof(data))
+        console.log(data + "12023198123hufdsiusdf g uygeyu");
+        const picture = 'data:image/png;base64,' + data[0];
+        renderBotImage(picture);
+
+
+    }
 
     function choosePrompt() {
         let prompts = ["cat", "dog", "house", "tree", "car", "apple", "banana", "computer", "phone", "book", "chair", "table", "flower", "sun", "moon", "star", "cloud", "mountain", "river", "ocean", "beach", "desert", "forest", "city", "country", "school", "hospital", "restaurant", "store", "park", "garden", "zoo", "museum", "library", "movie", "sport", "food", "drink", "animal", "plant", "insect", "fish", "bird", "reptile"];
@@ -183,7 +212,8 @@ export default function Paint() {
         const startVersusRoundForAll = (data) => {
             console.log("starting round for all...");
             clearCanvas();
-            choosePrompt();
+            const p = choosePrompt();
+            updateBotFunction(p);
             setTimer(true);
             setRemainingTime(timerTime);
             setGameState("drawing");
@@ -447,7 +477,14 @@ export default function Paint() {
                                 <img className='bg-white w-full h-[200px]' id={`drawing-${user}`} />
                             </div>
                         ))}
-                        
+                        {bot ? 
+                            <div key={-1} className={`text-black bg-gray-100 w-full`}>
+                                <h1 className='pl-3'>BOT</h1>
+                                <img className='bg-white w-full h-[200px]' id={`drawing--1`} />
+                            </div>
+                        :
+                        null
+                        }
                     </div>
 
                     <div>
