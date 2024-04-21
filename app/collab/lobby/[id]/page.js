@@ -22,7 +22,7 @@ export default function Paint() {
     const [gameState, setGameState] = useState("waiting to start"); // waiting, drawing, guessing
     const [customWords, setCustomWords] = useState([]);
     const [useOnlyCustomWords, setUseOnlyCustomWords] = useState(false);
-    const [timerTime, setTimerTime] = useState(8);
+    const [timerTime, setTimerTime] = useState(15);
     const [prompt, setPrompt] = useState();
     const [showSettingsModal, setShowSettingsModal] = useState(false);
 
