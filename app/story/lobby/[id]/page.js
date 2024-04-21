@@ -80,6 +80,7 @@ export default function Home() {
             setIsStoryTime(true);
             setIsLobbyTime(false);
         });
+        startStoryMode();
     }
 
     function startStoryMode() {
@@ -167,13 +168,33 @@ export default function Home() {
         };
     }, []);
 
+    function copyUrlToClipboard(event) {
+        const url = window.location.href;
+
+        const tempInput = document.createElement('input');
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        event.target.innerText = 'Copied Link to Clipboard!';
+
+        setTimeout(function () {
+            event.target.innerText = 'Copy Invite Link';
+        }, 2000);
+    }
+
     return (
         <div className="grow min-h-screen flex-col bg-stone-800 ">
             <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            Ai Dungeon
+                            StoryTellers
                         </Link>
                     </div>
                     <div className="dropdown">
@@ -216,67 +237,65 @@ export default function Home() {
             {/* Actual stuff now */}
 
             {lobbyExists
-                ? <div className="flex flex-col items-center pt-20">
-
+                ? <div className="flex flex-col items-center ">
 
                     {!joinedLobby && (
-                        <div className="row mt-3 mb-80">
-                            <input placeholder='username' className='px-5 py-2 border-none bg-white text-black rounded-l-md' onChange={(e) => setUsername(e.target.value)}></input>
-                            <button className='bg-gray-300 px-5 py-2 duration-200 rounded-r-md hover:bg-gray-400' onClick={joinLobby}>Join Lobby</button>
+                        <div className="row mt-80">
+                            <input placeholder='username' className='px-5 py-2 flex-grow rounded-l-md bg-stone-600' onChange={(e) => setUsername(e.target.value)}></input>
+                            <button className='px-4 py-2 rounded-r-md bg-blue-200 hover:bg-blue-300 text-black' onClick={joinLobby}>Join Lobby</button>
                         </div>
                     )}
 
-                    <div>
-                        {isLobbyTime ?
-                            <div>
-                                <div className="flex flex-col items-center mt-3 mb-5">
-                                    <div className="row">
-                                        <input placeholder='Enter your avatar prompt' value={avatarText} className='px-5 py-2 w-1/3 border-none bg-white text-black rounded-l-md' onChange={(e) => setAvatarText(e.target.value)}></input>
-                                        <button className='bg-gray-300 px-5 py-2 duration-200 rounded-r-md hover:bg-gray-400' onClick={assignAvatar}>Generate</button>
-                                        <button className="btn btn-secondary" onClick={startStoryMode}>Start Story</button>
-                                    </div>
-                                </div>
-                                {/* <input disabled value={story} /> */}
-                                <div className="flex flex-row items-center max-w-[80vw] min-w-[50vw] overflow-x-scroll bg-gray-200">
-                                    <div className="text-black flex flex-row items-center ml-auto mr-auto">
-                                        {connectedUsers.map((user, index) => (
-                                            <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
-                                                <img className='bg-white w-[400px] h-[400px]' id={`avatar-${user}`} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                            :
+                    <div className="w-full">
+                        {isLobbyTime ? <></> :
                             <>
                                 {
                                     isStoryTime ?
-                                    <>
-                                        <div id="main story strip" className="flex flex-row items-center mt-28 w-[80vw] h-[65vh] bg-gray-200">
-                                            <div className="no-scrollbar text-black flex flex-row overflow-x-auto items-center ml-auto mr-auto">
-                                                {storyContext.map((storyPoint, index) => (
-                                                    <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
-                                                        {/* <img className='bg-white w-[400px] h-[400px]' src={storyPoint} /> */}
+                                    <div className="mt-32 w-full flex flex-row">
+                                        <div className="ml-8">
+                                            <div className="flex flex-row w-full">
+                                                <input className="flex-grow rounded-lg px-5 bg-stone-600" placeholder="Type To Add On Story!" value={storyPrompt} onChange={e => setStoryPrompt(e.target.value)} />
+                                                <button className="px-6 py-4 rounded-md bg-blue-200 hover:bg-blue-300 text-black ml-4" onClick={sendPromptToGenerateStory}> Go </button>
+                                            </div>
+                                            <div id="main story strip" className="flex flex-row items-center mt-4 w-[75vw] h-[65vh] bg-stone-700 rounded-lg overflow-y-scroll">
+                                                <div className="no-scrollbar text-white flex flex-row overflow-y-scroll items-center ml-auto mr-auto">
+                                                    {storyContext.map((storyPoint, index) => (
+                                                    <div key={index} className="px-4 py-8 m-3 rounded-md flex items-center justify-center bg-stone-600">
+                                                    <div className="flex flex-col items-center justify-center w-full h-full">
                                                         {typeof storyPoint === 'string' && !storyPoint.startsWith('data') ? (
-                                                            <div className="w-[300px] h-[80%]">
+                                                            <div className="w-[300px] h-[80%] text-white flex items-center justify-center px-4">
                                                                 {storyPoint}
                                                             </div>
                                                         ) : (
-                                                            <div className="w-[800px] h-[80%]">
-                                                                {console.log(storyPoint)}
-                                                                <img className='bg-white' src={storyPoint } />
+                                                            <div className="w-[300px] h-[80%] flex items-center justify-center">
+                                                                <img className='max-w-full max-h-full bg-white' src={storyPoint} />
                                                             </div>
                                                         )}
                                                     </div>
+                                                </div>                                                                                            
                                                 ))}
                                             </div>
                                             {/* MAP ALL CHATS AND STORIES */}
                                         </div>
-                                        <div>
-                                            <input placeholder="Type To Add On Story!" value={storyPrompt} onChange={e => setStoryPrompt(e.target.value)} />
-                                            <button onClick={sendPromptToGenerateStory}> Go </button>
+                                    </div>
+                                        <div className="ml-4 w-30">
+                                            <button className='px-6 py-4 rounded-md bg-blue-200 hover:bg-blue-300 text-black mb-4' onClick={copyUrlToClipboard}>Copy Invite Link</button>
+                                            <div className=" border-stone-900 border-2 bg-stone-700 rounded-md">
+                                                {connectedUsers.length > 0 ?
+                                                    <h1 className='text-center w-full px-4 py-2'>StoryTellers:</h1>
+                                                    :
+                                                    <h1 className='text-center w-full px-4 py-2'>No One Joined Yet!</h1>
+                                                }
+                                                <div className="grid grid-cols-1 w-full">
+                                                    {connectedUsers.map((user, index) => (
+                                                        <div key={index} className={`text-white ${index === connectedUsers.length - 1 ? 'rounded-b-md' : ''} w-full`}>
+                                                            <h1 className='px-3 py-2'>{user}</h1>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </>
+                                    </div>
                                     :
                                     <>
                                     </>
