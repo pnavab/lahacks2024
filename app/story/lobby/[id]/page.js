@@ -48,8 +48,18 @@ export default function Home() {
         const data = await response.json();
         const picture = 'data:image/png;base64,' + data.image;
         socket.emit("updateStory", username, params.id, picture);
-
-    }
+        
+        const getHexCodes = await fetch('/api/get_mood', {
+            body: JSON.stringify({ 'image': picture}),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+        });
+        const data2 = await getHexCodes.json();
+        console.log('HEXCODES', data2);
+      
+        }
 
     async function sendPromptToGenerateStory() {
 
@@ -133,8 +143,8 @@ export default function Home() {
         };
         
         const updateStory = (data) => {
-            console.log("received update story image here", data);
-            console.log('ASDASDASD', story)
+            // console.log("received update story image here", data);
+            // console.log('ASDASDASD', story)
             setStory(story + data)
         }
         
@@ -146,7 +156,7 @@ export default function Home() {
         }
 
         const handleUpdateStoryForAll = (lastText, context) => {
-            console.log("received update story image here", lastText, context);
+            // console.log("received update story image here", lastText, context);
             // setStoryContext(storyContext => [data, ...storyContext]);
             setStoryContext(context.reverse());
             console.log("story context is now", storyContext);
@@ -272,7 +282,7 @@ export default function Home() {
                                                             </div>
                                                         ) : (
                                                             <div className="w-[300px] h-[80%] flex items-center justify-center">
-                                                                <img className='max-w-full max-h-full bg-white' src={storyPoint} />
+                                                                <img id={`image-${index}`} className='max-w-full max-h-full bg-white' src={storyPoint} />
                                                             </div>
                                                         )}
                                                     </div>
