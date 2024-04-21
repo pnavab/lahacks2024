@@ -33,7 +33,7 @@ export default function Home() {
   }
 
   return (
-    <main className="grow min-h-screen flex-col bg-black">
+    <main className="grow min-h-screen flex-col bg-stone-800">
       {/* navbar */}
       <div className="navbar fixed top-2 left-0 right-0 shadow-lg border-none bg-transparent text-white z-10">
         <div className="navbar-start">
@@ -70,8 +70,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-stone-800 pl-4 h-screen grid grid-cols-1 ">
-        <div className='pt-44'>
+      <div className="bg-stone-800 pl-4 h-screen grid grid-cols-1 mx-10">
+        <div className='pt-16'>
+          <h1 className="font-bold text-[7rem] text-indigo-700">SketchBox</h1>
           <h1 class="relative w-[max-content] font-mono before:absolute before:inset-0 before:animate-typewriter before:bg-stone-800  after:absolute after:inset-0 after:w-[0.125em] after:animate-caret after:bg-black text-7xl py-2"><p className=' text-slate-500'> AI</p>Powered Gaming</h1>
         </div>
         <div className=" animate-fadeIn delay-500">
@@ -88,12 +89,12 @@ export default function Home() {
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-200 to-indigo-50 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createStoryLobby}
                   >
-                    Storytelling mode
+                    StoryTeller
                     <p className="text-sm">
-                      Join friends to play a guessing game... with Ai
+                      Join friends to build your very own adventure story from scratch
                     </p>
                   </button>
                 </div>
@@ -103,12 +104,12 @@ export default function Home() {
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-200 to-indigo-50 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createCollaborativeCanvasLobby}
                   >
                     Collaborative AI Drawing
                     <p className="text-sm">
-                      Join friends to play a guessing game... with Ai
+                      Join friends to play a guessing game, racing against the clock together
                     </p>
                   </button>
                 </div>
@@ -118,12 +119,12 @@ export default function Home() {
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-200 to-indigo-50 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createVersusLobby}
                   >
                     Versus AI Drawing 
                     <p className="text-sm">
-                      Join friends to play a guessing game... with Ai
+                      Play against friends, or AI smart bot, to draw as fast as possible
                     </p>
                   </button>
                 </div>
