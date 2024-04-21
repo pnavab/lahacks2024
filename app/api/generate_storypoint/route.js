@@ -16,6 +16,7 @@ async function run(context) {
 
 export async function POST(req) {
   const { context } = await req.json();
+  console.log("context is ", context);
   const model = genAI.getGenerativeModel({ model: "gemini-pro"});
   
   const prompt = `Based on the following storypoint context of a choose your own adventure story, your task is to continue the story. Respond only in a few sentences picking up where the story left off and adding your own twists, making sure to keep the story interesting, suspenseful, and exciting for the user. Here is the context: ${context}`

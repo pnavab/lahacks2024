@@ -55,9 +55,13 @@ export default function Home() {
 
         // Gen Story Image here Et here
 
-        console.log('sendPromptToGenerateStory button clicked', storyPrompt)
+        console.log('sendPromptToGenerateStory button clicked', storyPrompt);
         socket.emit("updateStory", username, params.id, storyPrompt);
-        const contextToSend = storyContext.filter((element) => !element.startsWith('data'));
+        let contextToSend = storyContext.filter((element) => !element.startsWith('data'));
+        contextToSend = [storyPrompt, ...contextToSend]
+        contextToSend = contextToSend.reverse();
+        console.log("context before sending", storyContext);
+        console.log("context to send", contextToSend);
         const response = await fetch('/api/generate_storypoint', {
             method: 'POST',
             headers: {

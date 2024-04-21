@@ -99,6 +99,7 @@ app.prepare().then(() => {
       if (lobby) {
         lobby.context.push(updateText);
         const contextToSend = lobby.context.filter((point) => {typeof(point) === 'string'});
+        socket.emit('updatedStory', lobby.context);
         io.in(id).emit('updateStoryForAll', updateText, lobby.context);  
       } else {
         console.log("lobby not found");
