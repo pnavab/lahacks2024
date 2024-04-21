@@ -350,16 +350,6 @@ export default function Paint() {
                             </label>
                         </Link>
                     </div>
-                    <div className="dropdown">
-                        <label tabIndex="0" className="btn btn-ghost bg-transparent hover:bg-transparent">
-                            Games
-                        </label>
-                        <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  rounded-box w-52 bg-black bg-opacity-15 text-white">
-                            <li><a>Gamemode1</a></li>
-                            <li><a>Gamemode2</a></li>
-                            <li><a>GAMEMODE3!!</a></li>
-                        </ul>
-                    </div>
                 </div>
                 <div className="navbar-end">
                     <button className="btn btn-ghost bg-indigo-200 text-black hover:bg-indigo-100">

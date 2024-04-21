@@ -63,9 +63,9 @@ export default function Home() {
               Games
             </label>
             <ul tabIndex="0" className="menu menu-compact dropdown-content  shadow-lg  bg-opacity-15 rounded-box w-52 bg-black text-white">
-              <li><a>Gamemode1</a></li>
-              <li><a>Gamemode2</a></li>
-              <li><a>GAMEMODE3!!</a></li>
+              <li onClick={createCollaborativeCanvasLobby}><a>Collaborative Canvas</a></li>
+              <li onClick={createVersusLobby}><a>Versus Skribbl</a></li>
+              <li onClick={createStoryLobby}><a>StoryTellers</a></li>
             </ul>
           </div>
         </div>
