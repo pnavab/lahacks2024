@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { socket } from "./socket";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
 
 export default function Home() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function Home() {
         <div className="navbar-start">
           <div className="navbar-center">
             <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" > 
-              Ai Dungeon
+              skribbl.ai
             </Link> 
           </div>
           <div className="dropdown">
@@ -82,13 +82,13 @@ export default function Home() {
             <p className="pl-2"> Start Your Experience  </p>
           </button>
         </div>
-        <div className="pt-24  text-left duration-700">
+        <div className="mt-16  text-left duration-700">
           <div className=" w-full pr-4 flex justify-between gap-4" >
             <div className="card w-96    text-black ">
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200  hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createStoryLobby}
                   >
                     Storytelling mode
@@ -103,7 +103,7 @@ export default function Home() {
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200  hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl  text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createCollaborativeCanvasLobby}
                   >
                     Collaborative AI Drawing
@@ -118,7 +118,7 @@ export default function Home() {
               <div className="card-body">
                 <div className="card-actions justify-end">
                 <button
-                    className="w-full text-xl bg-white bg-opacity-5 text-white px-8 py-4  animate-fadeIn delay-200 hover:bg-opacity-0 duration-300 rounded-2xl "
+                    className="w-full text-xl text-black px-8 py-8  animate-fadeIn delay-200 bg-gradient-to-r from-indigo-300 to-indigo-100 hover:bg-opacity-0 duration-300 rounded-2xl "
                     onClick={createVersusLobby}
                   >
                     Versus AI Drawing 
