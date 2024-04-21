@@ -33,7 +33,7 @@ async def query_handler(ctx: Context, sender: str, _query: Request1):
     genai.configure(api_key='AIzaSyBu6U4n_yGG2cIRxdu4T36RRW7G2Ujsa94')
     model = genai.GenerativeModel(model_name="gemini-pro")
     response = model.generate_content(f"true or false: is it understandable that a smart person would mix up {_query.guessed} with {_query.correct} when playing pictionary")
-    print(response.text + "TESTSTS GEMINI res")
+    print("generating " + _query.correct+ " " +response.text)
     matches = re.search("[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]", response.text)
     if(matches == None):
         await ctx.send(sender, Response(text="fail"))
