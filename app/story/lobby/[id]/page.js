@@ -37,14 +37,27 @@ export default function Home() {
         socket.emit("updateAvatar", username, params.id, avatarText)
     }
 
-    async function sendPromptToGenerateImage() {
+    async function sendPromptToGenerateImage(prompt) {
+        const response = await fetch('/api/generate_fireworks_image', {
+            body: JSON.stringify({ 'prompt': prompt}),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+        });
+        const data = await response.json();
+        const picture = 'data:image/png;base64,' + data.image;
+        socket.emit("updateStory", username, params.id, picture);
+
+    }
+
+    async function sendPromptToGenerateStory() {
 
         // Gen Story Image here Et here
 
-        console.log('sendPromptToGenerateImage button clicked', storyPrompt)
+        console.log('sendPromptToGenerateStory button clicked', storyPrompt)
         socket.emit("updateStory", username, params.id, storyPrompt);
-        const contextToSend = storyContext.filter((element) => typeof element === 'string');
-        console.log("context to send", contextToSend);
+        const contextToSend = storyContext.filter((element) => !element.startsWith('data'));
         const response = await fetch('/api/generate_storypoint', {
             method: 'POST',
             headers: {
@@ -53,9 +66,8 @@ export default function Home() {
           body: JSON.stringify({context: contextToSend}),
         });
         const data = await response.json();
-        console.log("received from the prompt ai", data.response);
         socket.emit("updateStory", username, params.id, data.response);
-
+        sendPromptToGenerateImage(data.response);
     }
 
     function joinLobby() {
@@ -243,13 +255,14 @@ export default function Home() {
                                                 {storyContext.map((storyPoint, index) => (
                                                     <div key={index} className="w-80 h-96 m-3 rounded-md flex flex-row items-center bg-gray-50">
                                                         {/* <img className='bg-white w-[400px] h-[400px]' src={storyPoint} /> */}
-                                                        {typeof storyPoint === 'string' ? (
+                                                        {typeof storyPoint === 'string' && !storyPoint.startsWith('data') ? (
                                                             <div className="w-[300px] h-[80%]">
                                                                 {storyPoint}
                                                             </div>
                                                         ) : (
                                                             <div className="w-[800px] h-[80%]">
-                                                                <img className='bg-white' src={'/1.png'} />
+                                                                {console.log(storyPoint)}
+                                                                <img className='bg-white' src={storyPoint } />
                                                             </div>
                                                         )}
                                                     </div>
@@ -259,7 +272,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <input placeholder="Type To Add On Story!" value={storyPrompt} onChange={e => setStoryPrompt(e.target.value)} />
-                                            <button onClick={sendPromptToGenerateImage}> Go </button>
+                                            <button onClick={sendPromptToGenerateStory}> Go </button>
                                         </div>
                                     </>
                                     :

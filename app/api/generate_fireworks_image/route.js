@@ -8,7 +8,7 @@ async function promptSDXL(description) {
         Authorization: `Bearer VZlLjrlTqebChSNFepvks5aJzIxfu5RF1wTNppYHGtphRdkp `,
         Accept: "application/json",
       },
-      body: JSON.stringify({ prompt: description }),
+      body: JSON.stringify({ prompt: `Draw something that depicts the following setting in the story: ${description}` }),
     },
   );
   return await response.json().then((data) => data[0].base64);

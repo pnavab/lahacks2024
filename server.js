@@ -33,7 +33,9 @@ function getResponseFromContext(context) {
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
-  const io = new Server(httpServer);
+  const io = new Server(httpServer, {
+    maxHttpBufferSize: 1e8
+  });
 
   io.on("connection", (socket) => {
     socket.on('hello', (data) => {
@@ -95,10 +97,9 @@ app.prepare().then(() => {
       let id = parseInt(lobbyId);
       const lobby = LOBBIES.get(id);
       if (lobby) {
-        console.log("updating story", updateText);
         lobby.context.push(updateText);
         const contextToSend = lobby.context.filter((point) => {typeof(point) === 'string'});
-        io.in(id).emit('updateStoryForAll', updateText, lobby.context);        
+        io.in(id).emit('updateStoryForAll', updateText, lobby.context);  
       } else {
         console.log("lobby not found");
         socket.emit('joinError', 'Lobby not found');
