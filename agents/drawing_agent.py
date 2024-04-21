@@ -41,10 +41,24 @@ async def query_handler(ctx: Context, sender: str, _query: Request0):
     ctx.logger.info("Query received")
 
     # img = get_ai_image(_query.correct)
+    url = "https://api.fireworks.ai/inference/v1/image_generation/accounts/fireworks/models/stable-diffusion-xl-1024-v1-0"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer VZlLjrlTqebChSNFepvks5aJzIxfu5RF1wTNppYHGtphRdkp",
+        "Accept": "application/json"
+    }
+    prompt = f"{_query.correct} black and white crude children's drawing"
+    payload = {"prompt": prompt}
 
-    
-    await ctx.send(sender, Request0(correct="iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC"))
+    response = requests.post(url, headers=headers, json=payload)
+    data = response.json()
+    await ctx.send(sender, Request0(correct=data[0]['base64']))
 
 
 if __name__ == "__main__":
     drawing_agent.run()
+
+
+    import requests
+import json
+
