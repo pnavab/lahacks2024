@@ -251,7 +251,7 @@ export default function Paint() {
                 <div className="navbar-start">
                     <div className="navbar-center">
                         <Link href='/' className="btn btn-ghost normal-case text-xl hover:bg-transparent hover:text-gray-300 duration-300" >
-                            Ai Dungeon
+                            skribbl.ai
                         </Link>
                     </div>
                     <div className="dropdown">
